@@ -11,4 +11,11 @@
 .CodeMirror {
   height: 100% !important;
 }
+.CodeMirror-overlayscroll-horizontal div,
+.CodeMirror-overlayscroll-vertical div {
+  background: #505050 !important;
+}
+.CodeMirror-scrollbar-filler {
+  visibility: hidden;
+}
 </style>
