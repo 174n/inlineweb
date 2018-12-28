@@ -1,23 +1,29 @@
 <template>
   <div id="editor">
-    <div class="container">
-      <div class="editor-panes" :class="panesPosition" :style="editorPanesStyles">
-        <div class="pane html-pane">
-          <codemirror v-model="htmlCode" :options="getEditorParams('html')"></codemirror>
-        </div>
-        <div class="pane css-pane">
-          <codemirror v-model="cssCode" :options="getEditorParams('css')"></codemirror>
-        </div>
-        <div class="pane js-pane">
-          <codemirror v-model="jsCode" :options="getEditorParams('javascript')"></codemirror>
-        </div>
-        <div class="pane output-pane">
-          <div class="resizer" :class="{ resizing }" @mousedown="startResizing"></div>
-          hello there
-        </div>
-        <div class="statusbar">
-          testing
-        </div>
+    <div class="editor-panes" :class="panesPosition" :style="editorPanesStyles">
+      <div class="pane html-pane">
+        <div class="label">html</div>
+        <codemirror v-model="htmlCode" :options="getEditorParams('html')"></codemirror>
+      </div>
+      <div class="pane css-pane">
+        <div class="label">css</div>
+        <codemirror v-model="cssCode" :options="getEditorParams('css')"></codemirror>
+      </div>
+      <div class="pane js-pane">
+        <div class="label">js</div>
+        <codemirror v-model="jsCode" :options="getEditorParams('javascript')"></codemirror>
+      </div>
+      <div class="pane output-pane">
+        <div class="resizer" :class="{ resizing }" @mousedown="startResizing"></div>
+        <div class="overlay" :class="{ resizing }"></div>
+        <iframe
+          id="iframe"
+          sandbox="allow-scripts allow-forms allow-top-navigation allow-popups allow-modals allow-popups-to-escape-sandbox"
+          src="data:text/html;charset=utf-8;base64,aGVsbG8gdGhlcmU="
+        ></iframe>
+      </div>
+      <div class="statusbar">
+        testing
       </div>
     </div>
   </div>
@@ -53,6 +59,14 @@ export default {
   components: {
     codemirror
   },
+  watch: {
+    panesPosition: function() {
+      this.editorPanesStyles = {
+        "grid-template-columns": "",
+        "grid-template-rows": ""
+      };
+    }
+  },
   methods: {
     getEditorParams: lang => ({
       tabSize: 4,
@@ -86,7 +100,7 @@ export default {
           if (window.innerHeight - e.pageY > 100 && e.pageY > 100) {
             this.editorPanesStyles[prop] =
               // eslint-disable-next-line
-              `${e.pageY + 2 - 60}px ${window.innerHeight - e.pageY - 2 + 60}px 30px`;
+              `${e.pageY + 2 - 90}px ${window.innerHeight - e.pageY - 2}px 30px`;
           }
         }
       }
@@ -97,6 +111,8 @@ export default {
 
 <style scoped lang="scss">
 $sidebarHeight: 60px;
+$editorThemeBg: #151515;
+$lightGray: #2d2d2d;
 
 /deep/ {
   .CodeMirror,
@@ -124,11 +140,12 @@ $sidebarHeight: 60px;
   margin-top: $sidebarHeight;
   height: calc(100% - #{$sidebarHeight});
   width: 100%;
+  background-color: $editorThemeBg;
 
   .resizer {
     display: block;
     position: absolute;
-    background-color: #151515;
+    background-color: $editorThemeBg;
     transition: all 250ms ease-in-out;
     &:before {
       content: "";
@@ -257,22 +274,48 @@ $sidebarHeight: 60px;
 .js-pane {
   grid-area: js;
 }
-.statusbar {
-  grid-area: statusbar;
-  background-color: #404040;
-  color: #ccc;
-  display: flex;
-  align-items: center;
-  padding: 0 10px;
-}
-.output-pane {
-  grid-area: output;
-  position: relative;
-}
 .pane {
   overflow: hidden;
   .vue-codemirror {
     height: 100%;
   }
+  .label {
+    color: #ccc;
+    padding: 5px 10px;
+    text-transform: uppercase;
+    background-color: $lightGray;
+    font-size: 0.9em;
+    display: block;
+  }
+}
+.output-pane {
+  grid-area: output;
+  position: relative;
+  #iframe {
+    border: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #fff;
+  }
+  .overlay {
+    display: block;
+    &.resizing {
+      display: block;
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      z-index: 100500;
+    }
+  }
+}
+.statusbar {
+  grid-area: statusbar;
+  background-color: $lightGray;
+  color: #ccc;
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
 }
 </style>
