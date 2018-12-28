@@ -12,20 +12,10 @@ require("typeface-montserrat");
 @import "normalize-scss";
 @include normalize();
 
-body {
+*,
+*:before,
+*:after {
   font-family: "Montserrat", sans-serif;
   box-sizing: border-box;
-  transition: 250ms;
-}
-.CodeMirror,
-.CodeMirror-scroll {
-  height: 100% !important;
-}
-.CodeMirror-overlayscroll-horizontal div,
-.CodeMirror-overlayscroll-vertical div {
-  background: #505050 !important;
-}
-.CodeMirror-scrollbar-filler {
-  visibility: hidden;
 }
 </style>

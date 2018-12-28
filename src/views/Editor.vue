@@ -1,7 +1,7 @@
 <template>
   <div id="editor">
     <div class="container">
-      <div class="editor-panes" :style="editorPanesStyles">
+      <div class="editor-panes" :class="panesPosition" :style="editorPanesStyles">
         <div class="pane html-pane">
           <codemirror v-model="htmlCode" :options="getEditorParams('html')"></codemirror>
         </div>
@@ -12,8 +12,11 @@
           <codemirror v-model="jsCode" :options="getEditorParams('javascript')"></codemirror>
         </div>
         <div class="pane output-pane">
-          <div class="resizer" @mousedown="startResizing"></div>
+          <div class="resizer" :class="{ resizing }" @mousedown="startResizing"></div>
           hello there
+        </div>
+        <div class="statusbar">
+          testing
         </div>
       </div>
     </div>
@@ -33,15 +36,18 @@ import "codemirror/addon/scroll/simplescrollbars.js";
 import "codemirror/addon/scroll/simplescrollbars.css";
 
 export default {
+  name: "editor",
   data() {
     return {
       htmlCode: '<div class="css-pane"></div>',
       cssCode: ".test {\n\tcolor: red;\n}",
       jsCode: "const a = 10",
       editorPanesStyles: {
-        "grid-template-columns": "40% 60%"
+        "grid-template-columns": "",
+        "grid-template-rows": ""
       },
-      resizing: false
+      resizing: false,
+      panesPosition: "left"
     };
   },
   components: {
@@ -59,21 +65,30 @@ export default {
     startResizing() {
       this.resizing = true;
       let that = this;
+      document.body.style.userSelect = "none";
       window.addEventListener("mouseup", () => {
         that.resizing = false;
+        document.body.style.userSelect = "auto";
       });
       window.addEventListener("mousemove", this.doResize);
     },
     doResize(e) {
       if (this.resizing) {
-        let prop = "grid-template-columns";
-        // let [left, right] = this.editorPanesStyles[prop]
-        //   .split(/(\d{2})%/g)
-        //   .filter(v=>v.trim())
-        //   .map(v=>parseFloat(v));
-        // eslint-disable-next-line
-        this.editorPanesStyles[prop] = `${e.pageX + 2}px ${window.innerWidth - e.pageX - 2}px`;
-        console.log(e.pageX, window.innerWidth);
+        if (this.panesPosition === "left" || this.panesPosition === "right") {
+          let prop = "grid-template-columns";
+          if (window.innerWidth - e.pageX > 100 && e.pageX > 100) {
+            this.editorPanesStyles[prop] =
+              // eslint-disable-next-line
+              `${e.pageX + 2}px ${window.innerWidth - e.pageX - 2}px`;
+          }
+        } else {
+          let prop = "grid-template-rows";
+          if (window.innerHeight - e.pageY > 100 && e.pageY > 100) {
+            this.editorPanesStyles[prop] =
+              // eslint-disable-next-line
+              `${e.pageY + 2 - 60}px ${window.innerHeight - e.pageY - 2 + 60}px 30px`;
+          }
+        }
       }
     }
   }
@@ -82,17 +97,156 @@ export default {
 
 <style scoped lang="scss">
 $sidebarHeight: 60px;
+
+/deep/ {
+  .CodeMirror,
+  .CodeMirror-scroll {
+    height: 100% !important;
+    font-size: 0.97em;
+  }
+  // .CodeMirror-gutters {
+  //   background-color: rgba(#fff, 0.03);
+  // }
+  .CodeMirror-overlayscroll-horizontal div,
+  .CodeMirror-overlayscroll-vertical div {
+    background: #505050 !important;
+  }
+  .CodeMirror-scrollbar-filler {
+    visibility: hidden;
+  }
+}
+
 .editor-panes {
+  $resizer-border: #ccc 1px solid;
+
   position: absolute;
   display: grid;
   margin-top: $sidebarHeight;
   height: calc(100% - #{$sidebarHeight});
   width: 100%;
-  grid-template-rows: repeat(3, 1fr);
-  grid-template-areas:
-    "html output"
-    "css output"
-    "js output";
+
+  .resizer {
+    display: block;
+    position: absolute;
+    background-color: #151515;
+    transition: all 250ms ease-in-out;
+    &:before {
+      content: "";
+      transition: 250ms;
+      display: block;
+      margin: auto;
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      right: 0;
+      left: 0;
+    }
+  }
+
+  &.left,
+  &.right {
+    grid-template-rows: repeat(3, 1fr) 30px;
+    .resizer {
+      height: 100%;
+      width: 10px;
+      cursor: col-resize;
+      &:hover,
+      &.resizing {
+        &:before {
+          border-color: #eee;
+          height: 60px;
+        }
+      }
+      &:before {
+        border-right: $resizer-border;
+        border-left: $resizer-border;
+        width: 5px;
+        height: 50px;
+      }
+    }
+  }
+  &.left {
+    grid-template-columns: 40% 60%;
+    grid-template-areas:
+      "html output"
+      "css output"
+      "js output"
+      "statusbar statusbar";
+    .resizer {
+      left: 0;
+      &:before {
+        left: -3px;
+      }
+    }
+    .output-pane {
+      padding-left: 10px;
+    }
+  }
+  &.right {
+    grid-template-columns: 60% 40%;
+    grid-template-areas:
+      "output html"
+      "output css"
+      "output js"
+      "statusbar statusbar";
+    .resizer {
+      right: 0;
+    }
+    .output-pane {
+      padding-right: 10px;
+    }
+  }
+  &.top,
+  &.bottom {
+    grid-template-columns: repeat(3, 1fr);
+    .resizer {
+      width: 100%;
+      height: 10px;
+      cursor: row-resize;
+      &:hover,
+      &.resizing {
+        &:before {
+          border-color: #eee;
+          width: 60px;
+        }
+      }
+      &:before {
+        border-top: $resizer-border;
+        border-bottom: $resizer-border;
+        height: 5px;
+        width: 50px;
+      }
+    }
+  }
+  &.top {
+    grid-template-rows: repeat(2, 1fr) 30px;
+    grid-template-areas:
+      "html css js"
+      "output output output"
+      "statusbar statusbar statusbar";
+    .resizer {
+      top: 0;
+    }
+    .output-pane {
+      padding-top: 10px;
+    }
+  }
+  &.bottom {
+    grid-template-rows: repeat(2, 1fr) 30px;
+    grid-template-areas:
+      "output output output"
+      "html css js"
+      "statusbar statusbar statusbar";
+    .resizer {
+      bottom: 0;
+      &:before {
+        bottom: -3px;
+      }
+    }
+    .output-pane {
+      padding-bottom: 10px;
+    }
+  }
 }
 .html-pane {
   grid-area: html;
@@ -103,39 +257,17 @@ $sidebarHeight: 60px;
 .js-pane {
   grid-area: js;
 }
+.statusbar {
+  grid-area: statusbar;
+  background-color: #404040;
+  color: #ccc;
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
+}
 .output-pane {
   grid-area: output;
-  padding-left: 10px;
   position: relative;
-}
-.resizer {
-  display: block;
-  height: 100%;
-  width: 10px;
-  position: absolute;
-  left: 0;
-  cursor: ew-resize;
-  background-color: #151515;
-  transition: all 0.1s ease-in-out;
-  // &:hover {
-  //   left: -7px;
-  //   width: 9px;
-  // }
-  &:before {
-    content: "";
-    display: block;
-    $resizer-border: #ccc 1px solid;
-    border-right: $resizer-border;
-    border-left: $resizer-border;
-    width: 3px;
-    height: 50px;
-    margin: auto;
-    position: absolute;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    right: 0;
-  }
 }
 .pane {
   overflow: hidden;
