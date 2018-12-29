@@ -3,15 +3,27 @@
     <div class="editor-panes" :class="panesPosition" :style="editorPanesStyles">
       <div class="pane html-pane">
         <div class="label">html</div>
-        <codemirror v-model="htmlCode" :options="getEditorParams('html')"></codemirror>
+        <codemirror
+          v-model="htmlCode"
+          @changes="editorChanges"
+          :options="getEditorParams('html')"
+        ></codemirror>
       </div>
       <div class="pane css-pane">
         <div class="label">css</div>
-        <codemirror v-model="cssCode" :options="getEditorParams('css')"></codemirror>
+        <codemirror
+          v-model="cssCode"
+          @changes="editorChanges"
+          :options="getEditorParams('css')"
+        ></codemirror>
       </div>
       <div class="pane js-pane">
         <div class="label">js</div>
-        <codemirror v-model="jsCode" :options="getEditorParams('javascript')"></codemirror>
+        <codemirror
+          v-model="jsCode"
+          @changes="editorChanges"
+          :options="getEditorParams('javascript')"
+        ></codemirror>
       </div>
       <div class="pane output-pane">
         <div class="resizer" :class="{ resizing }" @mousedown="startResizing"></div>
@@ -36,6 +48,7 @@
 </template>
 
 <script>
+import CodeMirror from "codemirror";
 import { codemirror } from "vue-codemirror";
 import "codemirror/lib/codemirror.css";
 import "codemirror/mode/htmlmixed/htmlmixed.js";
@@ -46,6 +59,7 @@ import "codemirror/theme/base16-dark.css";
 //addons
 import "codemirror/addon/scroll/simplescrollbars.js";
 import "codemirror/addon/scroll/simplescrollbars.css";
+import emmet from "@emmetio/codemirror-plugin";
 
 export default {
   name: "editor",
@@ -59,8 +73,12 @@ export default {
         "grid-template-rows": ""
       },
       resizing: false,
-      panesPosition: "left"
+      panesPosition: "left",
+      changeTimer: null
     };
+  },
+  created() {
+    emmet(CodeMirror);
   },
   components: {
     codemirror
@@ -80,7 +98,11 @@ export default {
       theme: "base16-dark",
       lineNumbers: true,
       line: true,
-      scrollbarStyle: "overlay"
+      scrollbarStyle: "overlay",
+      extraKeys: {
+        Tab: "emmetExpandAbbreviation",
+        Enter: "emmetInsertLineBreak"
+      }
     }),
     startResizing() {
       this.resizing = true;
@@ -110,6 +132,14 @@ export default {
           }
         }
       }
+    },
+    editorChanges() {
+      clearTimeout(this.changeTimer);
+      this.changeTimer = setTimeout(() => {
+        // eslint-disable-next-line
+        let code = `<style>${this.cssCode}</style>${this.htmlCode}<script>${this.jsCode}<\/script>`;
+        document.getElementById("iframe").src = `data:text/html;charset=utf-8;base64,${btoa(code)}`;
+      }, 2000);
     }
   }
 };
