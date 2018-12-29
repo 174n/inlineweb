@@ -23,7 +23,13 @@
         ></iframe>
       </div>
       <div class="statusbar">
-        testing
+        <div class="left">testing</div>
+        <div class="right">
+          <button class="changePos" @click="panesPosition='left'">left</button>
+          <button class="changePos" @click="panesPosition='right'">right</button>
+          <button class="changePos" @click="panesPosition='top'">top</button>
+          <button class="changePos" @click="panesPosition='bottom'">bottom</button>
+        </div>
       </div>
     </div>
   </div>
@@ -119,7 +125,7 @@ $grayText: #ccc;
   .CodeMirror {
     height: 100% !important;
   }
-  .CodeMirror-scroll{
+  .CodeMirror-scroll {
     font-size: 0.97em;
     height: calc(100% - 30px);
   }
@@ -321,6 +327,18 @@ $grayText: #ccc;
   color: $grayText;
   display: flex;
   align-items: center;
+  justify-content: space-between;
   padding: 0 10px;
+  .changePos {
+    border: 0;
+    background-color: transparent;
+    color: $grayText;
+    font-size: 0.9em;
+    cursor: pointer;
+    outline-style: none;
+    &:hover {
+      color: lighten($grayText, 50);
+    }
+  }
 }
 </style>
