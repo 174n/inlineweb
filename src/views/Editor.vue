@@ -37,10 +37,13 @@
       <div class="statusbar">
         <div class="left">testing</div>
         <div class="right">
-          <button class="changePos" @click="panesPosition='left'">left</button>
-          <button class="changePos" @click="panesPosition='right'">right</button>
-          <button class="changePos" @click="panesPosition='top'">top</button>
-          <button class="changePos" @click="panesPosition='bottom'">bottom</button>
+          <button @click="minifyCode">minify</button>
+          <button @click="beautifyCode">beautify</button>
+          <div class="divider"></div>
+          <button @click="panesPosition='left'">left</button>
+          <button @click="panesPosition='right'">right</button>
+          <button @click="panesPosition='top'">top</button>
+          <button @click="panesPosition='bottom'">bottom</button>
         </div>
       </div>
     </div>
@@ -60,6 +63,10 @@ import "codemirror/theme/base16-dark.css";
 import "codemirror/addon/scroll/simplescrollbars.js";
 import "codemirror/addon/scroll/simplescrollbars.css";
 import emmet from "@emmetio/codemirror-plugin";
+//other libs
+import { js as jsBeautify } from "js-beautify";
+import { html as htmlBeautify } from "js-beautify";
+import { css as cssBeautify } from "js-beautify";
 
 export default {
   name: "editor",
@@ -78,6 +85,7 @@ export default {
     };
   },
   created() {
+    console.log(this.minify(this.cssCode));
     emmet(CodeMirror);
   },
   components: {
@@ -138,8 +146,24 @@ export default {
       this.changeTimer = setTimeout(() => {
         // eslint-disable-next-line
         let code = `<style>${this.cssCode}</style>${this.htmlCode}<script>${this.jsCode}<\/script>`;
+        // eslint-disable-next-line
         document.getElementById("iframe").src = `data:text/html;charset=utf-8;base64,${btoa(code)}`;
       }, 2000);
+    },
+    minify: code =>
+      code
+        .replace(/\n/g, " ")
+        .replace(/ {2}|\t/g, "")
+        .replace(/( |)(\{|\}|\)|\(|\+|-|\*|\/)( |)/g, "$2"),
+    minifyCode() {
+      this.htmlCode = this.minify(this.htmlCode);
+      this.cssCode = this.minify(this.cssCode);
+      this.jsCode = this.minify(this.jsCode);
+    },
+    beautifyCode() {
+      this.htmlCode = htmlBeautify(this.htmlCode);
+      this.cssCode = cssBeautify(this.cssCode);
+      this.jsCode = jsBeautify(this.jsCode);
     }
   }
 };
@@ -153,14 +177,11 @@ $grayText: #ccc;
 
 /deep/ {
   .CodeMirror {
-    height: 100% !important;
-  }
-  .CodeMirror-scroll {
-    font-size: 0.97em;
     height: calc(100% - 30px);
+    font-size: 0.97em;
   }
   .CodeMirror-gutters {
-    background-color: rgba(#fff, 0.03);
+    background-color: lighten($editorThemeBg, 3);
   }
   .CodeMirror-overlayscroll-horizontal div,
   .CodeMirror-overlayscroll-vertical div {
@@ -230,9 +251,6 @@ $grayText: #ccc;
       "statusbar statusbar";
     .resizer {
       left: 0;
-      &:before {
-        left: -3px;
-      }
     }
     .output-pane {
       padding-left: 10px;
@@ -359,7 +377,19 @@ $grayText: #ccc;
   align-items: center;
   justify-content: space-between;
   padding: 0 10px;
-  .changePos {
+  .left,
+  .right {
+    display: flex;
+    align-items: center;
+  }
+  .divider {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background-color: darken($grayText, 50);
+    margin: 0 5px;
+  }
+  button {
     border: 0;
     background-color: transparent;
     color: $grayText;
