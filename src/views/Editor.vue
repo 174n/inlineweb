@@ -113,16 +113,19 @@ export default {
 $sidebarHeight: 60px;
 $editorThemeBg: #151515;
 $lightGray: #2d2d2d;
+$grayText: #ccc;
 
 /deep/ {
-  .CodeMirror,
-  .CodeMirror-scroll {
+  .CodeMirror {
     height: 100% !important;
-    font-size: 0.97em;
   }
-  // .CodeMirror-gutters {
-  //   background-color: rgba(#fff, 0.03);
-  // }
+  .CodeMirror-scroll{
+    font-size: 0.97em;
+    height: calc(100% - 30px);
+  }
+  .CodeMirror-gutters {
+    background-color: rgba(#fff, 0.03);
+  }
   .CodeMirror-overlayscroll-horizontal div,
   .CodeMirror-overlayscroll-vertical div {
     background: #505050 !important;
@@ -133,7 +136,7 @@ $lightGray: #2d2d2d;
 }
 
 .editor-panes {
-  $resizer-border: #ccc 1px solid;
+  $resizer-border: $grayText 1px solid;
 
   position: absolute;
   display: grid;
@@ -280,12 +283,14 @@ $lightGray: #2d2d2d;
     height: 100%;
   }
   .label {
-    color: #ccc;
-    padding: 5px 10px;
+    color: $grayText;
+    height: 30px;
+    display: flex;
+    padding: 0 10px;
+    align-items: center;
     text-transform: uppercase;
     background-color: $lightGray;
     font-size: 0.9em;
-    display: block;
   }
 }
 .output-pane {
@@ -313,7 +318,7 @@ $lightGray: #2d2d2d;
 .statusbar {
   grid-area: statusbar;
   background-color: $lightGray;
-  color: #ccc;
+  color: $grayText;
   display: flex;
   align-items: center;
   padding: 0 10px;
