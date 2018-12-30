@@ -31,11 +31,15 @@
         <iframe
           id="iframe"
           sandbox="allow-scripts allow-forms allow-top-navigation allow-popups allow-modals allow-popups-to-escape-sandbox"
-          src="data:text/html;charset=utf-8;base64,aGVsbG8gdGhlcmU="
+          :src="'data:text/html;charset=utf-8;base64,' + base64code"
         ></iframe>
       </div>
       <div class="statusbar">
-        <div class="left">testing</div>
+        <div class="left">
+          <span :class="compressedSizeColor">
+            {{ compressedCode.length }} bytes
+          </span>
+        </div>
         <div class="right">
           <button @click="minifyCode">minify</button>
           <button @click="beautifyCode">beautify</button>
@@ -51,41 +55,56 @@
 </template>
 
 <script>
+// codemirror
 import CodeMirror from "codemirror";
 import { codemirror } from "vue-codemirror";
 import "codemirror/lib/codemirror.css";
 import "codemirror/mode/htmlmixed/htmlmixed.js";
 import "codemirror/mode/css/css.js";
 import "codemirror/mode/javascript/javascript.js";
-//theme
+
+// theme
 import "codemirror/theme/base16-dark.css";
-//addons
+
+// addons
 import "codemirror/addon/scroll/simplescrollbars.js";
 import "codemirror/addon/scroll/simplescrollbars.css";
 import emmet from "@emmetio/codemirror-plugin";
-//other libs
+
+// other libs
 import { js as jsBeautify } from "js-beautify";
 import { html as htmlBeautify } from "js-beautify";
 import { css as cssBeautify } from "js-beautify";
+import { LZMA } from "lzma/src/lzma-c-min.js";
 
 export default {
   name: "editor",
   data() {
     return {
-      htmlCode: '<div class="css-pane"></div>',
+      htmlCode: '<div class="test">hello there</div>',
       cssCode: ".test {\n\tcolor: red;\n}",
-      jsCode: "const a = 10",
+      jsCode: "document.write('test')",
       editorPanesStyles: {
         "grid-template-columns": "",
         "grid-template-rows": ""
       },
       resizing: false,
       panesPosition: "left",
-      changeTimer: null
+      changeTimer: null,
+      base64code: "",
+      compressedCode: ""
     };
   },
+  computed: {
+    compressedSizeColor() {
+      const size = this.compressedCode.length;
+      if(size < 2000) return "green"
+        else if(size < 4000) return "yellow";
+      return "red";
+    }
+  },
   created() {
-    console.log(this.minify(this.cssCode));
+    this.setCode();
     emmet(CodeMirror);
   },
   components: {
@@ -144,10 +163,7 @@ export default {
     editorChanges() {
       clearTimeout(this.changeTimer);
       this.changeTimer = setTimeout(() => {
-        // eslint-disable-next-line
-        let code = `<style>${this.cssCode}</style>${this.htmlCode}<script>${this.jsCode}<\/script>`;
-        // eslint-disable-next-line
-        document.getElementById("iframe").src = `data:text/html;charset=utf-8;base64,${btoa(code)}`;
+        this.setCode();
       }, 2000);
     },
     minify: code =>
@@ -164,6 +180,21 @@ export default {
       this.htmlCode = htmlBeautify(this.htmlCode);
       this.cssCode = cssBeautify(this.cssCode);
       this.jsCode = jsBeautify(this.jsCode);
+    },
+    setCode() {
+      // eslint-disable-next-line
+      const code = `<style>${this.cssCode}</style>${this.htmlCode}<script>${this.jsCode}<\/script>`;
+      this.compressedCode = this.encodeString(code);
+      this.base64code = `${btoa(code)}`;
+    },
+    encodeString: string => {
+      const Uint8ArrayToBase64 = bytes =>
+        btoa(bytes.reduce((a, v) => a += String.fromCharCode(v), ""));
+      const encodeString = (string, level = 9) =>
+        Uint8ArrayToBase64(new Uint8Array(LZMA.compress(string, level)));
+      let uncomp = btoa(string);
+      let comp = encodeString(string);
+      return uncomp.length > comp.length ? comp : "~" + uncomp;
     }
   }
 };
@@ -175,13 +206,22 @@ $editorThemeBg: #151515;
 $lightGray: #2d2d2d;
 $grayText: #ccc;
 
+$darkblue: #2D3047;
+$green: #1B998B;
+$yellow: #FFFD82;
+$orange: #FF9B71;
+$red: #FF5B69;
+
 /deep/ {
   .CodeMirror {
     height: calc(100% - 30px);
     font-size: 0.97em;
   }
+  .cm-s-base16-dark.CodeMirror {
+    background-color: darken($darkblue, 15);
+  }
   .CodeMirror-gutters {
-    background-color: lighten($editorThemeBg, 3);
+    background-color: darken($darkblue, 10);
   }
   .CodeMirror-overlayscroll-horizontal div,
   .CodeMirror-overlayscroll-vertical div {
@@ -200,12 +240,12 @@ $grayText: #ccc;
   margin-top: $sidebarHeight;
   height: calc(100% - #{$sidebarHeight});
   width: 100%;
-  background-color: $editorThemeBg;
+  background-color: darken($darkblue, 15);
 
   .resizer {
     display: block;
     position: absolute;
-    background-color: $editorThemeBg;
+    background-color: darken($darkblue, 15);
     transition: all 250ms ease-in-out;
     &:before {
       content: "";
@@ -343,7 +383,7 @@ $grayText: #ccc;
     padding: 0 10px;
     align-items: center;
     text-transform: uppercase;
-    background-color: $lightGray;
+    background-color: $darkblue;
     font-size: 0.9em;
   }
 }
@@ -371,12 +411,13 @@ $grayText: #ccc;
 }
 .statusbar {
   grid-area: statusbar;
-  background-color: $lightGray;
+  background-color: $darkblue;
   color: $grayText;
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 0 10px;
+  font-size: 0.9em;
   .left,
   .right {
     display: flex;
@@ -386,19 +427,30 @@ $grayText: #ccc;
     width: 7px;
     height: 7px;
     border-radius: 50%;
-    background-color: darken($grayText, 50);
+    background-color: lighten($darkblue, 15);
     margin: 0 5px;
   }
   button {
     border: 0;
     background-color: transparent;
     color: $grayText;
-    font-size: 0.9em;
     cursor: pointer;
     outline-style: none;
     &:hover {
       color: lighten($grayText, 50);
     }
+  }
+  .green {
+    color: lighten($green, 20);
+  }
+  .yellow {
+    color: $yellow;
+  }
+  .orange {
+    color: $orange;
+  }
+  .red {
+    color: $red;
   }
 }
 </style>

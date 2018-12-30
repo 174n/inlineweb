@@ -11,6 +11,7 @@
   "dependencies": {
     "@emmetio/codemirror-plugin": "^0.5.4",
     "js-beautify": "^1.8.9",
+    "lzma": "^2.3.2",
     "normalize-scss": "^7.0.1",
     "typeface-montserrat": "0.0.54",
     "vue": "^2.5.17",
