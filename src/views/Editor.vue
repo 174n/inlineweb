@@ -98,8 +98,8 @@ export default {
   computed: {
     compressedSizeColor() {
       const size = this.compressedCode.length;
-      if(size < 2000) return "green"
-        else if(size < 4000) return "yellow";
+      if (size < 2000) return "green";
+      else if (size < 4000) return "yellow";
       return "red";
     }
   },
@@ -168,8 +168,9 @@ export default {
     },
     minify: code =>
       code
+        .replace(/\/\/(.*)\n/g, "")
         .replace(/\n/g, " ")
-        .replace(/ {2}|\t/g, "")
+        .replace(/ {2}|\t|\/\*(.*?)\*\//g, "")
         .replace(/( |)(\{|\}|\)|\(|\+|-|\*|\/)( |)/g, "$2"),
     minifyCode() {
       this.htmlCode = this.minify(this.htmlCode);
@@ -189,6 +190,7 @@ export default {
     },
     encodeString: string => {
       const Uint8ArrayToBase64 = bytes =>
+        // eslint-disable-next-line
         btoa(bytes.reduce((a, v) => a += String.fromCharCode(v), ""));
       const encodeString = (string, level = 9) =>
         Uint8ArrayToBase64(new Uint8Array(LZMA.compress(string, level)));
@@ -201,27 +203,16 @@ export default {
 </script>
 
 <style scoped lang="scss">
-$sidebarHeight: 60px;
-$editorThemeBg: #151515;
-$lightGray: #2d2d2d;
-$grayText: #ccc;
-
-$darkblue: #2D3047;
-$green: #1B998B;
-$yellow: #FFFD82;
-$orange: #FF9B71;
-$red: #FF5B69;
-
 /deep/ {
   .CodeMirror {
     height: calc(100% - 30px);
     font-size: 0.97em;
   }
   .cm-s-base16-dark.CodeMirror {
-    background-color: darken($darkblue, 15);
+    background-color: $editorThemeBg;
   }
   .CodeMirror-gutters {
-    background-color: darken($darkblue, 10);
+    background-color: darken($darkgray, 10);
   }
   .CodeMirror-overlayscroll-horizontal div,
   .CodeMirror-overlayscroll-vertical div {
@@ -237,15 +228,14 @@ $red: #FF5B69;
 
   position: absolute;
   display: grid;
-  margin-top: $sidebarHeight;
   height: calc(100% - #{$sidebarHeight});
   width: 100%;
-  background-color: darken($darkblue, 15);
+  background-color: $editorThemeBg;
 
   .resizer {
     display: block;
     position: absolute;
-    background-color: darken($darkblue, 15);
+    background-color: $editorThemeBg;
     transition: all 250ms ease-in-out;
     &:before {
       content: "";
@@ -383,7 +373,7 @@ $red: #FF5B69;
     padding: 0 10px;
     align-items: center;
     text-transform: uppercase;
-    background-color: $darkblue;
+    background-color: $darkgray;
     font-size: 0.9em;
   }
 }
@@ -411,7 +401,7 @@ $red: #FF5B69;
 }
 .statusbar {
   grid-area: statusbar;
-  background-color: $darkblue;
+  background-color: darken($darkgray, 5);
   color: $grayText;
   display: flex;
   align-items: center;
@@ -427,7 +417,7 @@ $red: #FF5B69;
     width: 7px;
     height: 7px;
     border-radius: 50%;
-    background-color: lighten($darkblue, 15);
+    background-color: lighten($darkgray, 15);
     margin: 0 5px;
   }
   button {
