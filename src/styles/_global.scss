@@ -8,3 +8,12 @@ $green: #00e572;
 $yellow: #fffd82;
 $orange: #ff9b71;
 $red: #ff5b69;
+
+body {
+  background-color: lighten($editorThemeBg, 10);
+}
+
+.container {
+  width: 1200px;
+  margin: 0 auto;
+}

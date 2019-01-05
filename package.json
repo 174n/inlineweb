@@ -17,6 +17,7 @@
     "vue": "^2.5.17",
     "vue-codemirror": "^4.0.6",
     "vue-router": "^3.0.1",
+    "vue-truncate-filter": "^1.1.7",
     "vuex": "^3.0.1"
   },
   "devDependencies": {
