@@ -6,6 +6,9 @@ import store from "./store";
 import VueTruncate from "vue-truncate-filter";
 Vue.use(VueTruncate);
 
+import Paginate from "vuejs-paginate";
+Vue.component("paginate", Paginate);
+
 Vue.config.productionTip = false;
 
 new Vue({

@@ -11,7 +11,15 @@
           :author="p.author"
         />
       </div>
-      <div class="pagination"></div>
+      <paginate
+        :page-count="pageCount"
+        :click-handler="getProjects"
+        :page-range="4"
+        prev-text="Prev"
+        next-text="Next"
+        container-class="paginate"
+      >
+      </paginate>
     </section>
   </div>
 </template>
@@ -24,11 +32,26 @@ export default {
   name: "home",
   data() {
     return {
-      projects: projects.slice(0, 6)
+      projects: [],
+      projectsPerPage: 6
     };
   },
   components: {
     project: ProjectPreview
+  },
+  computed: {
+    pageCount() {
+      return Math.ceil(projects.length / this.projectsPerPage);
+    }
+  },
+  methods: {
+    getProjects(page) {
+      let start = (page - 1) * this.projectsPerPage;
+      this.projects = projects.slice(start, start + this.projectsPerPage);
+    }
+  },
+  created() {
+    this.getProjects(1);
   }
 };
 </script>

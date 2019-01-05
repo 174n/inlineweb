@@ -49,6 +49,7 @@ export default {
     text-transform: capitalize;
   }
   .bottom {
+    margin-top: 2px;
     font-size: 0.9em;
     color: #bbb;
   }
