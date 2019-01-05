@@ -1,6 +1,8 @@
 <template>
   <header id="header">
-  	<div class="left">logo</div>
+  	<div class="left">
+      <router-link to="/" class="logo">logo</router-link>
+    </div>
     <div class="right">
       <div class="authorized" v-if="authed">
         <button class="profile">
@@ -16,8 +18,8 @@
         </div>
       </div>
       <div class="unauthorized" v-else>
-        <a href="#" class="btn">Log In</a>
-        <a href="#" class="btn focus">Register</a>
+        <router-link to="login" class="btn">Log In</router-link>
+        <router-link to="register" class="btn focus">Register</router-link>
       </div>
     </div>
   </header>
@@ -46,6 +48,11 @@ $btnColor: #333;
   justify-content: space-between;
   align-items: center;
   padding: 0 15px;
+}
+.logo {
+  text-decoration: none;
+  color: inherit;
+  padding: 15px 0;
 }
 .btn {
   text-decoration: none;
