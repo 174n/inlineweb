@@ -1,54 +1,48 @@
 <template>
   <div class="container">
-    <form id="login" @submit.prevent="formSubmit">
-      <div class="form-item">
-        <label for="email">E-mail</label>
-        <input type="text" v-model="email" name="email" placeholder="E-mail">
-      </div>
-      <div class="form-item">
-        <label for="login">Login</label>
-        <input type="text" v-model="login" name="login" placeholder="Login">
-      </div>
-      <div class="form-item">
-        <label for="password">Password</label>
-        <input type="password" v-model="password" name="password" placeholder="Password">
-      </div>
-      <div class="form-item">
-        <label for="password2">Confirm password</label>
-        <input type="password" v-model="password2" name="password2" placeholder="Confirm password">
-      </div>
-      <div class="form-item with-margin">
-        <button type="submit">Register</button>
-      </div>
-    </form>
+    <custom-form :inputs="inputs" button="Register" @submit="formSubmit" />
   </div>
 </template>
 
 <script>
+import Form from "@/components/Form.vue";
+
 export default {
   name: "register",
+  components: {
+    "custom-form": Form
+  },
   data() {
     return {
-      email: "",
-      login: "",
-      password: "",
-      password2: ""
+      inputs: [
+        {
+          name: "email",
+          type: "email",
+          model: ""
+        },
+        {
+          name: "login",
+          type: "text",
+          model: ""
+        },
+        {
+          name: "password",
+          type: "password",
+          model: ""
+        },
+        {
+          name: "password2",
+          placeholder: "Confirm password",
+          type: "password",
+          model: ""
+        }
+      ]
     };
   },
   methods: {
-    formSubmit() {
-      console.log(this.login, this.password);
-      this.login = this.password = "";
+    formSubmit(inputs) {
+      console.log(inputs);
     }
   }
 };
 </script>
-
-<style scoped lang="scss">
-#login {
-  background-color: lighten($editorThemeBg, 10);
-  width: 500px;
-  margin: 30px auto;
-  padding: 30px;
-}
-</style>

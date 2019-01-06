@@ -9,6 +9,12 @@ Vue.use(VueTruncate);
 import Paginate from "vuejs-paginate";
 Vue.component("paginate", Paginate);
 
+Vue.filter("capitalize", v => {
+  if (!v) return "";
+  v = v.toString();
+  return v.charAt(0).toUpperCase() + v.slice(1);
+});
+
 Vue.config.productionTip = false;
 
 new Vue({
