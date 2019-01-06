@@ -18,11 +18,13 @@ export default {
         {
           name: "login",
           type: "text",
+          validation: "required|alpha_dash|min:3|max:15",
           model: ""
         },
         {
           name: "password",
           type: "password",
+          validation: "required|min:6|max:25",
           model: ""
         }
       ],
