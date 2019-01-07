@@ -1,21 +1,35 @@
-.DS_Store
-node_modules
-/dist
+# from vue project
+/web/.DS_Store
+/web/node_modules
+/web/dist
 
 # local env files
-.env.local
-.env.*.local
+/web/.env.local
+/web/.env.*.local
 
 # Log files
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
+/web/npm-debug.log*
+/web/yarn-debug.log*
+/web/yarn-error.log*
 
 # Editor directories and files
-.idea
-.vscode
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw*
+/web/.idea
+/web/.vscode
+/web/*.suo
+/web/*.ntvs*
+/web/*.njsproj
+/web/*.sln
+/web/*.sw*
+
+# from laravel project
+/api/node_modules
+/api/public/hot
+/api/public/storage
+/api/storage/*.key
+/api/vendor
+/api/.env
+/api/.phpunit.result.cache
+/api/Homestead.json
+/api/Homestead.yaml
+/api/npm-debug.log
+/api/yarn-error.log
