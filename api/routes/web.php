@@ -11,6 +11,11 @@
 |
 */
 
+
+Route::get('/p', function () {
+    return view('inline');
+});
+
 Route::get('/{any}', 'VueController@index')->where('any', '.*');
 
 // Route::get('/', function () {
