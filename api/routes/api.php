@@ -23,3 +23,13 @@ Route::group([
     Route::post('refresh', 'AuthController@refresh');
     Route::post('me', 'AuthController@me');
 });
+
+Route::group([
+    'prefix' => 'projects'
+], function () {
+    Route::get('/', 'ProjectController@index');
+    Route::get('/{id}', 'ProjectController@show');
+    Route::post('/', 'ProjectController@store');
+    Route::put('/{id}', 'ProjectController@update');
+    Route::delete('/{id}', 'ProjectController@delete');
+});

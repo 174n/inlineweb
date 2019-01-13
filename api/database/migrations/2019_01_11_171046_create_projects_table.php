@@ -15,9 +15,11 @@ class CreateProjectsTable extends Migration
     {
         Schema::create('projects', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('title');
+            $table->string('title')->nullable('Untitled Project');
             $table->text('code');
             $table->char('uuid', 7)->unique();
+            $table->unsignedInteger('user_id');
+            $table->foreign('user_id')->references('id')->on('users');
             $table->timestamps();
         });
     }
@@ -29,6 +31,6 @@ class CreateProjectsTable extends Migration
      */
     public function down()
     {
-         Schema::drop('projects');
+         Schema::dropIfExists('projects');
     }
 }
