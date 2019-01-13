@@ -16,9 +16,9 @@ export default {
     return {
       inputs: [
         {
-          name: "login",
+          name: "email",
           type: "text",
-          validation: "required|alpha_dash|min:3|max:15",
+          validation: "required|email|min:3|max:15",
           model: ""
         },
         {
@@ -30,14 +30,20 @@ export default {
       ],
       link: {
         text: "Forgot password?"
-      }
+      },
+      error: "test"
     };
   },
   methods: {
-    formSubmit(inputs) {
+    async formSubmit(inputs) {
+      let fields = {};
       inputs.forEach(v => {
-        console.log(v.model);
+        fields[v.name] = v.model;
         v.model = "";
+      });
+      this.$store.dispatch("login", {
+        email: fields.email,
+        password: fields.password
       });
     }
   }

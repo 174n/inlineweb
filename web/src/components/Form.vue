@@ -1,6 +1,9 @@
 <template>
   <div class="container">
     <form @submit.prevent="formSubmit">
+      <div class="form-item">
+        <div class="error" v-if="formError">{{ formError }}</div>
+      </div>
       <div class="form-item" v-for="input in inputs" :key="input.name">
         <label :for="input.name" :class="{warning: errors.has(input.name)}">
           {{ input.placeholder || input.name | capitalize }}
@@ -28,6 +31,8 @@
 </template>
 
 <script>
+import { EventBus } from "@/event-bus.js";
+
 export default {
   name: "register",
   props: {
@@ -35,8 +40,14 @@ export default {
     button: String,
     link: Object
   },
+  data() {
+    return {
+      formError: ""
+    };
+  },
   methods: {
     formSubmit() {
+      this.formError = "";
       this.$validator.validateAll().then(result => {
         if (result) {
           console.log(result);
@@ -44,6 +55,11 @@ export default {
         }
       });
     }
+  },
+  created() {
+    EventBus.$on("form-error", error => {
+      this.formError = error;
+    });
   }
 };
 </script>

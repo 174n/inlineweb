@@ -46,7 +46,16 @@ export default {
   },
   methods: {
     formSubmit(inputs) {
-      console.log(inputs);
+      let fields = {};
+      inputs.forEach(v => {
+        fields[v.name] = v.model;
+        v.model = "";
+      });
+      this.$store.dispatch("register", {
+        email: fields.email,
+        name: fields.login,
+        password: fields.password
+      });
     }
   }
 };
