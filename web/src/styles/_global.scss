@@ -38,27 +38,32 @@ body {
   li {
     display: block;
     flex-grow: 1;
-    margin: 5px;
+    &:first-child a {
+      border-radius: $borderRadius 0 0 $borderRadius;
+    }
+    &:last-child a {
+      border-radius: 0 $borderRadius $borderRadius 0;
+    }
     a{
       display: block;
       outline: none;
       text-align: center;
       width: 100%;
       padding: 10px 20px;
-      background-color: $grayText;
-      border-radius: $borderRadius;
+      background-color: lighten($editorThemeBg, 3);
+      color: $grayText;
       letter-spacing: 1px;
       &:hover, &.active {
-        background-color: lighten($grayText, 20);
+        background-color: lighten($editorThemeBg, 5);
       }
     }
     &.active a {
-      background-color: lighten($grayText, 20);
+      background-color: lighten($editorThemeBg, 5);
       font-weight: 600;
     }
     &.disabled a {
-      background-color: transparent;
-      color: $grayText;
+      background-color: lighten($editorThemeBg, 10);
+      color: darken($grayText, 50);
       cursor: default;
     }
   }
