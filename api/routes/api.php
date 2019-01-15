@@ -28,6 +28,7 @@ Route::group([
     'prefix' => 'projects'
 ], function () {
     Route::get('/', 'ProjectController@index');
+    Route::get('/user/{id}', 'ProjectController@user');
     Route::get('/{id}', 'ProjectController@show');
     Route::post('/', 'ProjectController@store');
     Route::put('/{id}', 'ProjectController@update');

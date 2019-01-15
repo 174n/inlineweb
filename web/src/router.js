@@ -8,8 +8,8 @@ import store from "./store";
 
 Vue.use(Router);
 
-const noAuth = function (to, from, next) {
-  if(!store.state.user) {
+const noAuth = function(to, from, next) {
+  if (!store.state.user) {
     next();
   } else {
     next("/");

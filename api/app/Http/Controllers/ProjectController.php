@@ -12,17 +12,26 @@ class ProjectController extends Controller
 
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['index', 'show']]);
+        $this->middleware('auth:api', ['except' => ['index', 'show', 'user']]);
     }
 
     public function index()
     {
-        return Project::all();
+        return Project::with('user:id,name')->select('title', 'uuid', 'user_id', 'created_at')
+            ->paginate(6);
     }
 
     public function show($id)
     {
         return Project::where('uuid', $id)->firstOrFail();
+    }
+
+    public function user($id)
+    {
+        return Project::select('title', 'uuid', 'user_id', 'created_at')
+            ->where('user_id', $id)
+            ->with('user:id,name')
+            ->paginate(6);
     }
 
     public function store(Request $request)

@@ -90,7 +90,8 @@ export default new Vuex.Store({
     },
     //LogOut
     async logout({ state, commit }) {
-      let response = await request("api/auth/logout", "POST", {}, state.token);
+      await request("api/auth/logout", "POST", {}, state.token);
+      // TODO: check if success
       commit("removeUserData");
     }
   }

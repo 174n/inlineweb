@@ -20,6 +20,11 @@ class Project extends Model
             $model->uuid = $shortid->generate();
         });
     }
+    
+    public function getUsernameAttribute()
+    {
+        return $this->user()->name;
+    }
 
     public function user()
     {
