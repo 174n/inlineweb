@@ -4,8 +4,17 @@ import Home from "./views/Home.vue";
 import Login from "./views/Login.vue";
 import Register from "./views/Register.vue";
 import User from "./views/User.vue";
+import store from "./store";
 
 Vue.use(Router);
+
+const noAuth = function (to, from, next) {
+  if(!store.state.user) {
+    next();
+  } else {
+    next("/");
+  }
+};
 
 export default new Router({
   mode: "history",
@@ -18,12 +27,14 @@ export default new Router({
     {
       path: "/login",
       name: "login",
-      component: Login
+      component: Login,
+      beforeEnter: noAuth
     },
     {
       path: "/register",
       name: "register",
-      component: Register
+      component: Register,
+      beforeEnter: noAuth
     },
     {
       path: "/user/:id?",
@@ -31,7 +42,7 @@ export default new Router({
       component: User
     },
     {
-      path: "/editor",
+      path: "/editor/:id?",
       name: "editor",
       component: () =>
         import(/* webpackChunkName: "editor" */ "./views/Editor.vue")

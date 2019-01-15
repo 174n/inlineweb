@@ -43,22 +43,28 @@ export default new Vuex.Store({
     setUser(state, user) {
       state.user = user;
     },
-    removeToken(state) {
+    removeUserData(state) {
       state.token = null;
+      state.user = null;
+      router.push("/");
     }
   },
 
   // Actions
   actions: {
-    async login({ commit }, { email, password }) {
+    // LogIn
+    async login({ commit, dispatch }, { email, password }) {
       let token = (await request("api/auth/login", "POST", { email, password }))
         .access_token;
       if (token) {
         commit("setToken", token);
+        dispatch("getUser");
+        router.push("/");
       } else {
         EventBus.$emit("form-error", "Incorrect username or password.");
       }
     },
+    // Register
     async register({ commit, dispatch }, { email, name, password }) {
       let response = await request("api/auth/register", "POST", {
         email,
@@ -73,13 +79,19 @@ export default new Vuex.Store({
         EventBus.$emit("form-error", Object.values(response).join(" "));
       }
     },
+    // Get User
     async getUser({ state, commit }) {
       let response = await request("api/auth/me", "POST", {}, state.token);
       if (response.message !== "Unauthenticated.") {
         commit("setUser", response);
       } else {
-        commit("removeToken");
+        commit("removeUserData");
       }
+    },
+    //LogOut
+    async logout({ state, commit }) {
+      let response = await request("api/auth/logout", "POST", {}, state.token);
+      commit("removeUserData");
     }
   }
 });
