@@ -15,6 +15,11 @@ export default {
   components: {
     Header,
     Error
+  },
+  created() {
+    if (this.$store.state.token) {
+      this.$store.dispatch("getUser");
+    }
   }
 };
 </script>

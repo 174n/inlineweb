@@ -4,18 +4,11 @@
       <router-link to="/" class="logo">logo</router-link>
     </div>
     <div class="right">
-      <div class="authorized" v-if="authed">
-        <button class="profile">
-          <div class="avatar"></div>
-          <div class="text">Nickname</div>
-        </button>
-        <div class="submenu">
-          <div class="item">test 1</div>
-          <div class="item">test 2</div>
-          <div class="item">test 3</div>
-          <div class="item">test 4</div>
-          <div class="item">test 5</div>
-        </div>
+      <div class="authorized" v-if="user">
+        <router-link class="profile" to="/user">
+          <span class="avatar" v-html="avatar"></span>
+          <div class="text">{{ user.name }}</div>
+        </router-link>
       </div>
       <div class="unauthorized" v-else>
         <router-link to="login" class="btn">Log In</router-link>
@@ -26,11 +19,16 @@
 </template>
 
 <script>
+import jdenticon from "jdenticon";
+
 export default {
-  data() {
-    return {
-      authed: false
-    };
+  computed: {
+    user() {
+      return this.$store.state.user;
+    },
+    avatar() {
+      return jdenticon.toSvg(this.user, 35);
+    }
   }
 };
 </script>
@@ -78,13 +76,11 @@ $btnColor: #333;
 .profile {
   display: flex;
   align-items: center;
-  // background-color: $btnColor;
-  background-color: transparent;
-  // border-radius: 10px;
   border: 0;
   color: inherit;
   cursor: pointer;
   height: $sidebarHeight;
+  text-decoration: none;
   .avatar {
     height: 35px;
     width: 35px;
@@ -93,27 +89,7 @@ $btnColor: #333;
   }
   .text {
     margin: 0 5px 0 10px;
-  }
-  &:hover ~ .submenu {
-    visibility: visible;
-  }
-}
-.submenu {
-  position: absolute;
-  z-index: 100;
-  top: $sidebarHeight;
-  right: 0;
-  width: 200px;
-  visibility: hidden;
-  background-color: lighten($editorThemeBg, 10);
-  .item {
-    padding: 15px 20px;
-    &:hover {
-      background-color: lighten($editorThemeBg, 20);
-    }
-  }
-  &:hover {
-    visibility: visible;
+    text-transform: capitalize;
   }
 }
 </style>

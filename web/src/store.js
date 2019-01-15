@@ -2,20 +2,21 @@ import Vue from "vue";
 import Vuex from "vuex";
 import createPersist from "vuex-localstorage";
 import { EventBus } from "@/event-bus.js";
+import router from "./router";
 
 Vue.use(Vuex);
 
-const headers = {
-  Accept: "application/json",
-  "Content-Type": "application/json"
-};
 const basepath = "http://localhost:8000/";
 
-const request = async (url, method, body) => {
+const request = async (url, method, body, token) => {
   return await (await fetch(basepath + url, {
     method: method,
     body: JSON.stringify(body),
-    headers
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`
+    }
   })).json();
 };
 
@@ -38,6 +39,12 @@ export default new Vuex.Store({
   mutations: {
     setToken(state, token) {
       state.token = token;
+    },
+    setUser(state, user) {
+      state.user = user;
+    },
+    removeToken(state) {
+      state.token = null;
     }
   },
 
@@ -52,7 +59,7 @@ export default new Vuex.Store({
         EventBus.$emit("form-error", "Incorrect username or password.");
       }
     },
-    async register({ commit }, { email, name, password }) {
+    async register({ commit, dispatch }, { email, name, password }) {
       let response = await request("api/auth/register", "POST", {
         email,
         name,
@@ -60,8 +67,18 @@ export default new Vuex.Store({
       });
       if (response.token) {
         commit("setToken", response.token);
+        dispatch("getUser");
+        router.push("/");
       } else {
         EventBus.$emit("form-error", Object.values(response).join(" "));
+      }
+    },
+    async getUser({ state, commit }) {
+      let response = await request("api/auth/me", "POST", {}, state.token);
+      if (response.message !== "Unauthenticated.") {
+        commit("setUser", response);
+      } else {
+        commit("removeToken");
       }
     }
   }
