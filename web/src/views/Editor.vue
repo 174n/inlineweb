@@ -320,7 +320,6 @@ export default {
   width: 100%;
   background-color: $editorThemeBg;
 
-
   @include mq($until: tablet) {
     height: auto;
   }
@@ -344,7 +343,6 @@ export default {
     @include mq($until: tablet) {
       display: none;
     }
-
   }
 
   &.left,

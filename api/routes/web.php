@@ -11,6 +11,7 @@
 |
 */
 
+Route::get('/p/{id}', 'PageController@index')->where('id', '[A-Za-z0-9-_]{7}');
 
 Route::get('/p', function () {
     return view('inline');

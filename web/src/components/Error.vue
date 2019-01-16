@@ -13,7 +13,7 @@ export default {
   name: "error",
   data() {
     return {
-      visible: true,
+      visible: false,
       brief: "",
       message: "",
       color: ""

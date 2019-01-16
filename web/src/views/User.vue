@@ -130,6 +130,5 @@ export default {
   border-radius: $borderRadius;
   text-decoration: none;
   cursor: pointer;
-  display: none;
 }
 </style>
