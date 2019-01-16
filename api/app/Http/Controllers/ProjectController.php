@@ -60,6 +60,18 @@ class ProjectController extends Controller
 
     public function update(Request $request, $id)
     {
+        $validator = Validator::make($request->all(), [
+            'title' => 'string|max:255',
+            'code' =>
+                array(
+                    'string',
+                    'max:4100',
+                    'regex:/^(?:[A-Za-z0-9+\/]{4})*(?:[A-Za-z0-9+\/]{2}==|[A-Za-z0-9+\/]{3}=|[A-Za-z0-9+\/]{4})$/'
+                )
+        ]);
+        if ($validator->fails()) {
+            return response()->json($validator->errors());
+        }
         $project = Project::where('uuid', $id)->firstOrFail();
         if(JWTAuth::user()->is($project->user)) {
             $project->update($request->all());

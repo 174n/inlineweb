@@ -114,22 +114,24 @@ export default {
   },
   created() {
     emmet(CodeMirror);
+    EventBus.$on("save-project", this.saveProject);
   },
   async mounted() {
     this.setCode();
-    if(this.$route.params.id) {
+    if (this.$route.params.id) {
       let project;
       try {
         project = await this.getProject(this.$route.params.id);
         this.title = project.title;
-        console.log(project);
       } catch (e) {
         EventBus.$emit("error", "Not found", "Project not found");
         this.$router.push("/");
       } finally {
         const code = this.decodeString(project.code);
+        // eslint-disable-next-line
         const regex = new RegExp("^<style>([^]*)<\/style>([^]*)<script>([^]*)<\/script>$", "g");
         if (regex.test(code)) {
+          this.$store.commit("updateEditorTitle", project.title);
           [this.cssCode, this.htmlCode, this.jsCode] = code
             .split(regex)
             .slice(1, -1);
@@ -141,6 +143,10 @@ export default {
     } else {
       console.log("new");
     }
+  },
+  beforeDestroy() {
+    EventBus.$off("save-project", this.saveProject);
+    this.$store.commit("updateEditorTitle", "");
   },
   components: {
     codemirror
@@ -156,6 +162,10 @@ export default {
   methods: {
     async getProject(id) {
       return await request("api/projects/" + id);
+    },
+    saveProject() {
+      EventBus.$emit("editor-new-change", false);
+      console.log("saved");
     },
     getEditorParams: lang => ({
       tabSize: 4,
@@ -198,8 +208,10 @@ export default {
         }
       }
     },
-    editorChanges() {
-      console.log(1);
+    editorChanges(e) {
+      if (e.state.focused) {
+        EventBus.$emit("editor-new-change", true);
+      }
       clearTimeout(this.changeTimer);
       this.changeTimer = setTimeout(() => {
         this.setCode();
@@ -238,7 +250,11 @@ export default {
       return uncomp.length > comp.length ? comp : "~" + uncomp;
     },
     decodeString: base64 => {
-      return LZMA.decompress(atob(base64).split("").map(v=>v.charCodeAt(0)))
+      return LZMA.decompress(
+        atob(base64)
+          .split("")
+          .map(v => v.charCodeAt(0))
+      );
     }
   }
 };

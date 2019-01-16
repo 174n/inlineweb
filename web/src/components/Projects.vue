@@ -4,7 +4,7 @@
       <project
         v-for="(p, i) in projects.data"
         :key="i"
-        :title="p.title"
+        :title="p.title || 'Untitled'"
         :img="'https://via.placeholder.com/390x250?text='+p.title"
         :date="p.created_at | eurodate"
         :author="p.user.name"

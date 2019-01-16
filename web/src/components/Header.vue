@@ -1,16 +1,26 @@
 <template>
   <header id="header">
   	<div class="left">
-      <router-link to="/" class="logo">logo</router-link>
+      <router-link to="/" class="logo">
+        <svg xmlns="http://www.w3.org/2000/svg" width="45" height="45" viewBox="0 0 200 200" preserveAspectRatio="xMidYMid meet"><path fill="#2e8c84" d="M100 16L100 58L79 58ZM142 58L100 58L100 37ZM100 184L100 142L121 142ZM58 142L100 142L100 163ZM58 58L58 100L37 100ZM184 100L142 100L142 79ZM142 142L142 100L163 100ZM16 100L58 100L58 121Z"></path><path fill="#59c7be" d="M100 58L100 91L79 58ZM142 100L109 100L142 79ZM100 142L100 109L121 142ZM58 100L91 100L58 121Z"></path></svg>
+      </router-link>
+      <div class="editorTitle" v-if="!notInEditor">
+        <input type="text" v-model="editorTitle" @keyup="editorChanges=true">
+      </div>
     </div>
     <div class="right">
       <div v-if="user">
-        <router-link class="btn new" to="/editor" v-if="route !== 'editor'">
+        <router-link class="btn new" to="/editor" v-if="notInEditor">
           New Project
         </router-link>
-        <a class="btn new" to="/editor" v-else>
+        <button
+          class="btn new"
+          :class="{focus: editorChanges}"
+          @click="saveProject"
+          to="/editor"
+          v-else>
           Save
-        </a>
+        </button>
         <router-link class="profile" to="/user">
           <span class="avatar" v-html="avatar"></span>
           <div class="text">{{ user.name }}</div>
@@ -26,8 +36,14 @@
 
 <script>
 import jdenticon from "jdenticon";
+import { EventBus } from "@/event-bus.js";
 
 export default {
+  data() {
+    return {
+      editorChanges: false
+    };
+  },
   computed: {
     user() {
       return this.$store.state.user;
@@ -37,10 +53,32 @@ export default {
     },
     route() {
       return this.$route.name;
+    },
+    notInEditor() {
+      return this.route !== "editor";
+    },
+    editorTitle: {
+      get() {
+        return this.$store.state.editorTitle;
+      },
+      set(value) {
+        this.$store.commit("updateEditorTitle", value);
+      }
+    }
+  },
+  methods: {
+    writeEditorChanges(state) {
+      this.editorChanges = state;
+    },
+    saveProject() {
+      EventBus.$emit("save-project");
     }
   },
   mounted() {
-    console.log(this.route);
+    EventBus.$on("editor-new-change", this.writeEditorChanges);
+  },
+  beforeDestroy() {
+    EventBus.$off("editor-new-change", this.writeEditorChanges);
   }
 };
 </script>
@@ -57,15 +95,32 @@ $btnColor: #333;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 15px;
 }
 .logo {
   text-decoration: none;
   color: inherit;
-  padding: 15px 0;
+  padding: 5px 10px;
+  background-color: lighten($editorThemeBg, 5);
 }
+.editorTitle {
+  margin: 13px;
+  input {
+    padding: 5px;
+    font-size: 1.2em;
+    border: 0;
+    background-color: transparent;
+    color: $grayText;
+    border-bottom: 1px $grayText solid;
+    outline: none;
+  }
+}
+.left,
 .right > div {
   display: flex;
+  align-items: center;
+}
+.right {
+  padding-right: 15px;
 }
 .btn {
   text-decoration: none;
@@ -78,6 +133,9 @@ $btnColor: #333;
   letter-spacing: 1px;
   font-weight: 600;
   display: block;
+  border: 0;
+  cursor: pointer;
+  outline: none;
   &.focus {
     background-color: $green;
     color: $editorThemeBg;

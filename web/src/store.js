@@ -35,6 +35,9 @@ export default new Vuex.Store({
       state.token = null;
       state.user = null;
       router.push("/");
+    },
+    updateEditorTitle(state, title) {
+      state.editorTitle = title;
     }
   },
 

@@ -53,12 +53,16 @@ export default {
           this.$emit("submit", this.inputs);
         }
       });
+    },
+    setError(error) {
+      this.formError = error;
     }
   },
   created() {
-    EventBus.$on("form-error", error => {
-      this.formError = error;
-    });
+    EventBus.$on("form-error", this.setError);
+  },
+  beforeDestroy() {
+    EventBus.$off("form-error", this.setError);
   }
 };
 </script>
