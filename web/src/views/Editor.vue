@@ -45,10 +45,18 @@
           <button @click="minifyCode">minify</button>
           <button @click="beautifyCode">beautify</button>
           <div class="divider"></div>
-          <button @click="panesPosition='left'">left</button>
-          <button @click="panesPosition='right'">right</button>
-          <button @click="panesPosition='top'">top</button>
-          <button @click="panesPosition='bottom'">bottom</button>
+          <button @click="panesPosition='left'" class="left">
+            <img :src="require(`@/assets/panels-icon.svg`)">
+          </button>
+          <button @click="panesPosition='right'" class="right">
+            <img :src="require(`@/assets/panels-icon.svg`)">
+          </button>
+          <button @click="panesPosition='top'" class="top">
+            <img :src="require(`@/assets/panels-icon.svg`)">
+          </button>
+          <button @click="panesPosition='bottom'" class="bottom">
+            <img :src="require(`@/assets/panels-icon.svg`)">
+          </button>
         </div>
       </div>
     </div>
@@ -484,8 +492,24 @@ export default {
     color: $grayText;
     cursor: pointer;
     outline-style: none;
+    padding: 0;
+    margin: 0 5px;
     &:hover {
       color: lighten($grayText, 50);
+    }
+    &.left img {
+      transform: rotate(-90deg);
+    }
+    &.right img {
+      transform: rotate(90deg);
+    }
+    &.top img {
+      transform: rotate(0deg);
+      padding-top: 3px;
+    }
+    &.bottom img {
+      transform: rotate(180deg);
+      padding-bottom: 3px;
     }
   }
   .green {
