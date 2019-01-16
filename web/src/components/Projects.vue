@@ -29,7 +29,7 @@ import request from "@/request";
 
 export default {
   name: "projects",
-  props: ["user_id"],
+  props: ["userid"],
   data() {
     return {
       projects: []
@@ -40,12 +40,23 @@ export default {
   },
   methods: {
     async getProjects(page) {
-      let response = await request("api/projects/?page=" + page);
+      let response = await request(`api/projects/?page=${page}`);
+      this.projects = response;
+    },
+    async getUserProjects(page) {
+      let response = await request(
+        `api/projects/user/${this.userid}?page=${page}`
+      );
+      this.$emit("total", response.total);
       this.projects = response;
     }
   },
   mounted() {
-    this.getProjects(1);
+    if (this.userid) {
+      this.getUserProjects(1);
+    } else {
+      this.getProjects(1);
+    }
   }
 };
 </script>

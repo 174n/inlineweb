@@ -18,7 +18,7 @@
           :class="{focus: editorChanges}"
           @click="saveProject"
           to="/editor"
-          v-else>
+          v-else v-show="!editorAuthor || editorAuthor === user.name">
           Save
         </button>
         <router-link class="profile" to="/user">
@@ -27,8 +27,8 @@
         </router-link>
       </div>
       <div v-else>
-        <router-link to="login" class="btn">Log In</router-link>
-        <router-link to="register" class="btn focus">Register</router-link>
+        <router-link to="/login" class="btn">Log In</router-link>
+        <router-link to="/register" class="btn focus">Register</router-link>
       </div>
     </div>
   </header>
@@ -64,6 +64,9 @@ export default {
       set(value) {
         this.$store.commit("updateEditorTitle", value);
       }
+    },
+    editorAuthor() {
+      return this.$store.state.editorAuthor;
     }
   },
   methods: {

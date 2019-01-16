@@ -105,8 +105,7 @@ export default {
       panesPosition: "left",
       changeTimer: null,
       base64code: "",
-      compressedCode: "",
-      title: ""
+      compressedCode: ""
     };
   },
   computed: {
@@ -140,6 +139,7 @@ export default {
         const regex = new RegExp("^<style>([^]*)<\/style>([^]*)<script>([^]*)<\/script>$", "g");
         if (regex.test(code)) {
           this.$store.commit("updateEditorTitle", project.title);
+          this.$store.commit("updateEditorAuthor", project.user.name);
           [this.cssCode, this.htmlCode, this.jsCode] = code
             .split(regex)
             .slice(1, -1);
@@ -149,7 +149,8 @@ export default {
         }
       }
     } else {
-      console.log("new");
+      this.$store.commit("updateEditorAuthor", "");
+      this.$store.commit("updateEditorTitle", "");
     }
   },
   beforeDestroy() {
@@ -171,9 +172,31 @@ export default {
     async getProject(id) {
       return await request("api/projects/" + id);
     },
-    saveProject() {
+    async saveProject() {
       EventBus.$emit("editor-new-change", false);
-      console.log("saved");
+      const id = this.$route.params.id;
+      if (id) {
+        const response = await request("api/projects/" + id, "PUT", {
+          code: this.getCode(true),
+          title: this.$store.state.editorTitle
+        });
+        if (response.uuid === id) {
+          EventBus.$emit("success", "Saved", "Successfully saved");
+        } else {
+          EventBus.$emit("error", "Saving error");
+        }
+      } else {
+        const response = await request("api/projects/", "POST", {
+          code: this.getCode(true),
+          title: this.$store.state.editorTitle
+        });
+        if (response.uuid) {
+          EventBus.$emit("success", "Saved", "Successfully saved");
+          this.$router.push("/editor/" + response.uuid);
+        } else {
+          EventBus.$emit("error", "Saving error");
+        }
+      }
     },
     getEditorParams: lang => ({
       tabSize: 4,
@@ -241,21 +264,20 @@ export default {
       this.cssCode = cssBeautify(this.cssCode);
       this.jsCode = jsBeautify(this.jsCode);
     },
-    setCode() {
+    getCode(compress = false) {
       // eslint-disable-next-line
       const code = `<style>${this.cssCode}</style>${this.htmlCode}<script>${this.jsCode}<\/script>`;
-      this.compressedCode = this.encodeString(code);
-      this.base64code = `${btoa(code)}`;
+      return compress ? this.encodeString(code) : code;
+    },
+    setCode() {
+      this.compressedCode = this.getCode(true);
+      this.base64code = `${btoa(this.getCode())}`;
     },
     encodeString: string => {
       const Uint8ArrayToBase64 = bytes =>
         // eslint-disable-next-line
         btoa(bytes.reduce((a, v) => a += String.fromCharCode(v), ""));
-      const encodeString = (string, level = 9) =>
-        Uint8ArrayToBase64(new Uint8Array(LZMA.compress(string, level)));
-      let uncomp = btoa(string);
-      let comp = encodeString(string);
-      return uncomp.length > comp.length ? comp : "~" + uncomp;
+      return Uint8ArrayToBase64(new Uint8Array(LZMA.compress(string, 9)));
     },
     decodeString: base64 => {
       return LZMA.decompress(

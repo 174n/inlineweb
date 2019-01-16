@@ -19,6 +19,7 @@ class ProjectController extends Controller
     {
         return Project::with('user:id,name')
             ->select('title', 'uuid', 'user_id', 'created_at')
+            ->orderBy('created_at', 'title')
             ->paginate(6);
     }
 

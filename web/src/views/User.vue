@@ -9,11 +9,11 @@
         <div class="created">
           Registration date: {{ this.user.created_at | eurodate }}
         </div>
-        <div class="projects">This user has 1 project</div>
+        <div class="projects">This user has {{ total }} project{{ multipleLetter }}</div>
       </div>
       <a @click="logout" v-if="!userId" class="logout">Logout</a>
     </div>
-    <projects/>
+    <projects :userid="user.id" @total="getTotal"/>
   </div>
 </template>
 
@@ -26,6 +26,11 @@ export default {
   components: {
     Projects
   },
+  data() {
+    return {
+      total: 0
+    };
+  },
   computed: {
     user() {
       return this.$store.state.user;
@@ -35,6 +40,9 @@ export default {
     },
     avatar() {
       return jdenticon.toSvg(this.user.name, 200);
+    },
+    multipleLetter() {
+      return this.total > 1 ? "s" : "";
     }
   },
   mounted() {
@@ -45,6 +53,9 @@ export default {
   methods: {
     logout() {
       this.$store.dispatch("logout");
+    },
+    getTotal(total) {
+      this.total = total;
     }
   }
 };

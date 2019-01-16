@@ -38,6 +38,9 @@ export default new Vuex.Store({
     },
     updateEditorTitle(state, title) {
       state.editorTitle = title;
+    },
+    updateEditorAuthor(state, author) {
+      state.editorAuthor = author;
     }
   },
 
