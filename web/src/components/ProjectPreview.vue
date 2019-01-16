@@ -30,6 +30,7 @@ export default {
   position: relative;
   height: 250px;
   background-size: cover;
+  background-position: center center;
   text-decoration: none;
   color: #ccc;
   &:hover {

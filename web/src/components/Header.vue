@@ -98,6 +98,9 @@ $btnColor: #333;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  @include mq($until: tablet) {
+    font-size: 0.8em;
+  }
 }
 .logo {
   text-decoration: none;

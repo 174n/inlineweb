@@ -71,8 +71,21 @@ export default {
   width: 60%;
   margin: 25px auto;
   position: relative;
+
+  @include mq($until: tablet) {
+    width: 100%;
+    align-items: center;
+    flex-direction: column;
+    border-radius: 0;
+    .text {
+      font-size: 0.8em;
+      margin: 10px;
+    }
+  }
 }
 .avatar {
+  width: 200px;
+  height: 200px;
   border-radius: $borderRadius;
   background-color: #666;
 }
@@ -117,5 +130,6 @@ export default {
   border-radius: $borderRadius;
   text-decoration: none;
   cursor: pointer;
+  display: none;
 }
 </style>

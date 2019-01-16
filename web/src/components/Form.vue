@@ -73,6 +73,15 @@ form {
   width: 500px;
   margin: 30px auto;
   padding: 30px;
+
+  @include mq($until: tablet) {
+    width: 100%;
+    .form-item a {
+      width: 100%;
+      text-align: center;
+      margin: 15px 0 0 0;
+    }
+  }
 }
 .form-item {
   margin: 10px;
