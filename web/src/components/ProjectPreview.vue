@@ -1,21 +1,24 @@
 <template>
-  <a href="#" class="project" :style="projectBg">
+  <router-link tag="a" class="project" :style="projectBg" :to="projectUrl">
     <div class="text">
       <div class="top">{{ title | truncate(34) }}</div>
       <div class="bottom">{{ author }} &bull; <span class="date">{{ date }}</span></div>
     </div>
-  </a>
+  </router-link>
 </template>
 
 <script>
 export default {
   name: "project",
-  props: ["img", "title", "date", "author"],
+  props: ["img", "title", "date", "author", "uuid"],
   computed: {
     projectBg() {
       return {
         backgroundImage: `url('${this.img}')`
       };
+    },
+    projectUrl() {
+      return `/editor/${this.uuid}`;
     }
   }
 };

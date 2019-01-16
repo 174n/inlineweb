@@ -6,19 +6,7 @@ import router from "./router";
 
 Vue.use(Vuex);
 
-const basepath = "http://localhost:8000/";
-
-const request = async (url, method, body, token) => {
-  return await (await fetch(basepath + url, {
-    method: method,
-    body: JSON.stringify(body),
-    headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`
-    }
-  })).json();
-};
+import request from "./request";
 
 export default new Vuex.Store({
   // Plugins
@@ -80,8 +68,8 @@ export default new Vuex.Store({
       }
     },
     // Get User
-    async getUser({ state, commit }) {
-      let response = await request("api/auth/me", "POST", {}, state.token);
+    async getUser({ commit }) {
+      let response = await request("api/auth/me", "POST");
       if (response.message !== "Unauthenticated.") {
         commit("setUser", response);
       } else {
@@ -89,10 +77,11 @@ export default new Vuex.Store({
       }
     },
     //LogOut
-    async logout({ state, commit }) {
-      await request("api/auth/logout", "POST", {}, state.token);
-      // TODO: check if success
-      commit("removeUserData");
+    async logout({ commit }) {
+      let response = await request("api/auth/logout", "POST");
+      if (response.message === "Successfully logged out") {
+        await commit("removeUserData");
+      }
     }
   }
 });

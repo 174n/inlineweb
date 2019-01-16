@@ -27,7 +27,7 @@ export default {
       return this.$store.state.user;
     },
     avatar() {
-      return jdenticon.toSvg(this.user, 35);
+      return jdenticon.toSvg(this.user.name, 35);
     }
   }
 };

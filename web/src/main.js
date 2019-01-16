@@ -18,6 +18,16 @@ Vue.filter("capitalize", v => {
   return v.charAt(0).toUpperCase() + v.slice(1);
 });
 
+Vue.filter("eurodate", v => {
+  if (!v) return "";
+  v = v.toString();
+  return v
+    .split(" ")[0]
+    .split("-")
+    .reverse()
+    .join(".");
+});
+
 Vue.config.productionTip = false;
 
 new Vue({

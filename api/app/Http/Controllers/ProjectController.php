@@ -17,13 +17,16 @@ class ProjectController extends Controller
 
     public function index()
     {
-        return Project::with('user:id,name')->select('title', 'uuid', 'user_id', 'created_at')
+        return Project::with('user:id,name')
+            ->select('title', 'uuid', 'user_id', 'created_at')
             ->paginate(6);
     }
 
     public function show($id)
     {
-        return Project::where('uuid', $id)->firstOrFail();
+        return Project::where('uuid', $id)
+            ->with('user:id,name')
+            ->firstOrFail();
     }
 
     public function user($id)

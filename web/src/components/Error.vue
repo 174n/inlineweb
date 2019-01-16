@@ -38,6 +38,7 @@ export default {
 <style scoped lang="scss">
 .error-msg {
   position: absolute;
+  z-index: 99999999999;
   margin: 15px;
   padding: 15px;
   background-color: $red;

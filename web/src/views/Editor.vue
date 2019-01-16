@@ -36,9 +36,10 @@
       </div>
       <div class="statusbar">
         <div class="left">
-          <span :class="compressedSizeColor">
-            {{ compressedCode.length }} bytes
+          <span :class="compressedSizeColor" v-if="compressedSize > 45">
+            {{ compressedSize }} bytes
           </span>
+          <span v-else>Size is loading</span>
         </div>
         <div class="right">
           <button @click="minifyCode">minify</button>
@@ -75,15 +76,19 @@ import emmet from "@emmetio/codemirror-plugin";
 import { js as jsBeautify } from "js-beautify";
 import { html as htmlBeautify } from "js-beautify";
 import { css as cssBeautify } from "js-beautify";
-import { LZMA } from "lzma/src/lzma-c-min.js";
+import { LZMA } from "lzma/src/lzma_worker-min.js";
+
+// local
+import { EventBus } from "@/event-bus.js";
+import request from "@/request";
 
 export default {
   name: "editor",
   data() {
     return {
-      htmlCode: '<div class="test">hello there</div>',
-      cssCode: ".test {\n\tcolor: red;\n}",
-      jsCode: "document.write('test')",
+      htmlCode: "",
+      cssCode: "",
+      jsCode: "",
       editorPanesStyles: {
         "grid-template-columns": "",
         "grid-template-rows": ""
@@ -101,11 +106,38 @@ export default {
       if (size < 2000) return "green";
       else if (size < 4000) return "yellow";
       return "red";
+    },
+    compressedSize() {
+      return this.compressedCode.length;
     }
   },
   created() {
-    this.setCode();
     emmet(CodeMirror);
+  },
+  async mounted() {
+    this.setCode();
+    if(this.$route.params.id) {
+      let project;
+      try {
+        project = await this.getProject(this.$route.params.id);
+      } catch (e) {
+        EventBus.$emit("error", "Not found", "Project not found");
+        this.$router.push("/");
+      } finally {
+        const code = this.decodeString(project.code);
+        const regex = new RegExp("^<style>([^]*)<\/style>([^]*)<script>([^]*)<\/script>$", "g");
+        if (regex.test(code)) {
+          [this.cssCode, this.htmlCode, this.jsCode] = code
+            .split(regex)
+            .slice(1, -1);
+        } else {
+          EventBus.$emit("error", "Code Error", "Project's code is broken");
+          this.$router.push("/");
+        }
+      }
+    } else {
+      console.log("new");
+    }
   },
   components: {
     codemirror
@@ -119,6 +151,9 @@ export default {
     }
   },
   methods: {
+    async getProject(id) {
+      return await request("api/projects/" + id);
+    },
     getEditorParams: lang => ({
       tabSize: 4,
       mode: `text/${lang}`,
@@ -197,6 +232,9 @@ export default {
       let uncomp = btoa(string);
       let comp = encodeString(string);
       return uncomp.length > comp.length ? comp : "~" + uncomp;
+    },
+    decodeString: base64 => {
+      return LZMA.decompress(atob(base64).split("").map(v=>v.charCodeAt(0)))
     }
   }
 };

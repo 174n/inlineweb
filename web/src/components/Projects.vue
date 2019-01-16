@@ -2,16 +2,17 @@
   <div class="wrapper">
     <div class="projects">
       <project
-        v-for="(p, i) in projects"
+        v-for="(p, i) in projects.data"
         :key="i"
         :title="p.title"
-        :img="p.img"
-        :date="p.date"
-        :author="p.author"
+        :img="'https://via.placeholder.com/390x250?text='+p.title"
+        :date="p.created_at | eurodate"
+        :author="p.user.name"
+        :uuid="p.uuid"
       />
     </div>
     <paginate
-      :page-count="pageCount"
+      :page-count="projects.last_page || 0"
       :click-handler="getProjects"
       :page-range="4"
       prev-text="Prev"
@@ -24,31 +25,26 @@
 
 <script>
 import ProjectPreview from "@/components/ProjectPreview";
-import projects from "@/faker/projects.json";
+import request from "@/request";
 
 export default {
   name: "projects",
+  props: ["user_id"],
   data() {
     return {
-      projects: [],
-      projectsPerPage: 6
+      projects: []
     };
   },
   components: {
     project: ProjectPreview
   },
-  computed: {
-    pageCount() {
-      return Math.ceil(projects.length / this.projectsPerPage);
-    }
-  },
   methods: {
-    getProjects(page) {
-      let start = (page - 1) * this.projectsPerPage;
-      this.projects = projects.slice(start, start + this.projectsPerPage);
+    async getProjects(page) {
+      let response = await request("api/projects/?page=" + page);
+      this.projects = response;
     }
   },
-  created() {
+  mounted() {
     this.getProjects(1);
   }
 };

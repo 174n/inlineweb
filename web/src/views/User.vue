@@ -6,7 +6,9 @@
         <div class="username">
           {{ user.name }}
         </div>
-        <div class="created"> Registration date: {{ userCreated }}</div>
+        <div class="created">
+          Registration date: {{ this.user.created_at | eurodate }}
+        </div>
         <div class="projects">This user has 1 project</div>
       </div>
       <a @click="logout" v-if="!userId" class="logout">Logout</a>
@@ -32,14 +34,7 @@ export default {
       return this.$route.params.id;
     },
     avatar() {
-      return jdenticon.toSvg(this.user, 200);
-    },
-    userCreated() {
-      return this.user.created_at
-        .split(" ")[0]
-        .split("-")
-        .reverse()
-        .join(".");
+      return jdenticon.toSvg(this.user.name, 200);
     }
   },
   mounted() {
