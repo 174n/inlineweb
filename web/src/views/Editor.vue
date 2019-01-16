@@ -97,7 +97,8 @@ export default {
       panesPosition: "left",
       changeTimer: null,
       base64code: "",
-      compressedCode: ""
+      compressedCode: "",
+      title: ""
     };
   },
   computed: {
@@ -120,6 +121,8 @@ export default {
       let project;
       try {
         project = await this.getProject(this.$route.params.id);
+        this.title = project.title;
+        console.log(project);
       } catch (e) {
         EventBus.$emit("error", "Not found", "Project not found");
         this.$router.push("/");
@@ -196,6 +199,7 @@ export default {
       }
     },
     editorChanges() {
+      console.log(1);
       clearTimeout(this.changeTimer);
       this.changeTimer = setTimeout(() => {
         this.setCode();

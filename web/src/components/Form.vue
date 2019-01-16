@@ -50,7 +50,6 @@ export default {
       this.formError = "";
       this.$validator.validateAll().then(result => {
         if (result) {
-          console.log(result);
           this.$emit("submit", this.inputs);
         }
       });

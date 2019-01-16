@@ -4,13 +4,19 @@
       <router-link to="/" class="logo">logo</router-link>
     </div>
     <div class="right">
-      <div class="authorized" v-if="user">
+      <div v-if="user">
+        <router-link class="btn new" to="/editor" v-if="route !== 'editor'">
+          New Project
+        </router-link>
+        <a class="btn new" to="/editor" v-else>
+          Save
+        </a>
         <router-link class="profile" to="/user">
           <span class="avatar" v-html="avatar"></span>
           <div class="text">{{ user.name }}</div>
         </router-link>
       </div>
-      <div class="unauthorized" v-else>
+      <div v-else>
         <router-link to="login" class="btn">Log In</router-link>
         <router-link to="register" class="btn focus">Register</router-link>
       </div>
@@ -28,7 +34,13 @@ export default {
     },
     avatar() {
       return jdenticon.toSvg(this.user.name, 35);
+    },
+    route() {
+      return this.$route.name;
     }
+  },
+  mounted() {
+    console.log(this.route);
   }
 };
 </script>
@@ -52,6 +64,9 @@ $btnColor: #333;
   color: inherit;
   padding: 15px 0;
 }
+.right > div {
+  display: flex;
+}
 .btn {
   text-decoration: none;
   color: inherit;
@@ -62,12 +77,16 @@ $btnColor: #333;
   transition: 250ms;
   letter-spacing: 1px;
   font-weight: 600;
+  display: block;
   &.focus {
     background-color: $green;
     color: $editorThemeBg;
     &:hover {
       background-color: lighten($green, 10);
     }
+  }
+  &.new {
+    margin: 12px;
   }
   &:hover {
     background-color: lighten($btnColor, 10);
@@ -80,6 +99,7 @@ $btnColor: #333;
   color: inherit;
   cursor: pointer;
   height: $sidebarHeight;
+  margin-left: 15px;
   text-decoration: none;
   .avatar {
     height: 35px;
