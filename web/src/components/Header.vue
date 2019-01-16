@@ -118,6 +118,9 @@ $btnColor: #333;
     color: $grayText;
     border-bottom: 1px $grayText solid;
     outline: none;
+    @include mq($until: tablet) {
+      width: 100%;
+    }
   }
 }
 .left,

@@ -320,6 +320,11 @@ export default {
   width: 100%;
   background-color: $editorThemeBg;
 
+
+  @include mq($until: tablet) {
+    height: auto;
+  }
+
   .resizer {
     display: block;
     position: absolute;
@@ -336,6 +341,10 @@ export default {
       right: 0;
       left: 0;
     }
+    @include mq($until: tablet) {
+      display: none;
+    }
+
   }
 
   &.left,
@@ -372,6 +381,9 @@ export default {
     }
     .output-pane {
       padding-left: 10px;
+      @include mq($until: tablet) {
+        padding-left: 0;
+      }
     }
   }
   &.right {
@@ -438,6 +450,18 @@ export default {
     .output-pane {
       padding-bottom: 10px;
     }
+  }
+
+  @include mq($until: tablet) {
+    height: 100%;
+    grid-template-columns: 100% !important;
+    grid-template-rows: repeat(3, 1fr) 2fr 30px !important;
+    grid-template-areas:
+      "html"
+      "css"
+      "js"
+      "output"
+      "statusbar" !important;
   }
 }
 .html-pane {
@@ -507,6 +531,9 @@ export default {
     border-radius: 50%;
     background-color: lighten($darkgray, 15);
     margin: 0 5px;
+    @include mq($until: tablet) {
+      display: none;
+    }
   }
   button {
     border: 0;
@@ -532,6 +559,14 @@ export default {
     &.bottom img {
       transform: rotate(180deg);
       padding-bottom: 3px;
+    }
+    &.left,
+    &.right,
+    &.top,
+    &.bottom {
+      @include mq($until: tablet) {
+        display: none;
+      }
     }
   }
   .green {

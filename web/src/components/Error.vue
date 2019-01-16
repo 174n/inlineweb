@@ -13,7 +13,7 @@ export default {
   name: "error",
   data() {
     return {
-      visible: false,
+      visible: true,
       brief: "",
       message: "",
       color: ""
@@ -61,7 +61,7 @@ export default {
   animation: slide-top 1s cubic-bezier(0, 0.57, 0, 1) both;
   transform: translateX(-100vw);
   padding-right: 60px;
-  height: 50px;
+  min-height: 50px;
   &.red {
     background-color: $red;
     .close {
