@@ -42,6 +42,8 @@
           <span v-else>Size is loading</span>
         </div>
         <div class="right">
+          <a :href="'/p/' + $route.params.id" v-if="$route.params.id">share</a>
+          <div class="divider" v-if="$route.params.id"></div>
           <button @click="minifyCode">minify</button>
           <button @click="beautifyCode">beautify</button>
           <div class="divider"></div>
@@ -533,7 +535,9 @@ export default {
       display: none;
     }
   }
-  button {
+  button,
+  a {
+    text-decoration: none;
     border: 0;
     background-color: transparent;
     color: $grayText;

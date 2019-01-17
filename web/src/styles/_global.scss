@@ -24,6 +24,18 @@ body {
   background-color: lighten($editorThemeBg, 7);
 }
 
+.hero a {
+  transition: all 250ms ease-in-out;
+  &,
+  &:visited,
+  &:active {
+    color: $green;
+  }
+  &:hover {
+    color: lighten($green, 20);
+  }
+}
+
 .container {
   @include mq($until: tablet) {
     width: mq-get-breakpoint-width(mobile, $mq-breakpoints);
