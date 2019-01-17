@@ -76,7 +76,7 @@ export default {
   overflow: hidden;
   position: absolute;
   z-index: 1;
-  .thumbnail {
+  .thumbnail{
     iframe {
       width: 1366px;
       height: 1000px;
@@ -96,4 +96,5 @@ export default {
     }
   }
 }
+
 </style>
