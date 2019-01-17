@@ -82,9 +82,31 @@ export default {
         }
       }
     }
+    @include mq($until: tablet) {
+      padding: 15px;
+      margin: 0 auto;
+      width: 100%;
+      .header {
+        text-align: center;
+      }
+      h1 {
+        font-size: 1.7em;
+      }
+      .buttons {
+        flex-direction: column;
+        a {
+          font-size: 1em;
+          margin-top: 5px;
+          text-align: center;
+        }
+      }
+    }
   }
   background-color: #333333;
   color: $grayText;
   padding: 50px 60px;
+  @include mq($until: tablet) {
+    padding: 10px;
+  }
 }
 </style>

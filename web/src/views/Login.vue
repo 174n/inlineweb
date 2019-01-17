@@ -18,7 +18,7 @@ export default {
         {
           name: "email",
           type: "text",
-          validation: "required|email|min:3|max:15",
+          validation: "required|email",
           model: ""
         },
         {

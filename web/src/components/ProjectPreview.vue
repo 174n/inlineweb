@@ -78,10 +78,12 @@ export default {
   z-index: 1;
   .thumbnail {
     iframe {
-      width: 1366px;
-      height: 1000px;
+      width: 100%;
+      height: 100%;
     }
-    position: relative;
+    position: absolute;
+    width: 400%;
+    height: 400%;
     transform: scale(0.25);
     transform-origin: 0 0;
     &:after {
