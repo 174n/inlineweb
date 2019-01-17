@@ -1,5 +1,5 @@
 import store from "./store";
-const basepath = "https://inlineweb.herokuapp.com/";
+const basepath = "//inlineweb.herokuapp.com/";
 
 export default async (url, method = "GET", body) => {
   return await (await fetch(basepath + url, {

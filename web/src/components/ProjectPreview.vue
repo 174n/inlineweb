@@ -6,7 +6,7 @@
     </div>
     <div class="thumbnail-container">
       <div class="thumbnail">
-       <iframe :src="'http://localhost:8000/p/' + uuid" frameborder="0"></iframe>
+       <iframe :src="'/p/' + uuid" frameborder="0"></iframe>
       </div>
     </div>
   </router-link>
