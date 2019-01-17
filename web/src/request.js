@@ -1,5 +1,5 @@
 import store from "./store";
-const basepath = "http://localhost:8000/";
+const basepath = "/";
 
 export default async (url, method = "GET", body) => {
   return await (await fetch(basepath + url, {
