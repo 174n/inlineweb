@@ -1,3 +1,4 @@
+# heroku git:remote -a appname
 git checkout master
 git subtree split --prefix api -b heroku
 git push -f heroku heroku:master
