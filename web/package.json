@@ -9,8 +9,9 @@
     "clear:babel-cache": "rimraf -rf ./node_modules/.cache/babel-loader/*",
     "copy:dist": "cpy '**/*.*' '!index.html' '../../api/public' --cwd=dist --parents",
     "copy:index": "cpy 'dist/index.html' '../api/resources/views' --rename=vue.blade.php",
+    "clean:dist": "del '../api/public/js' '../api/public/css' --force",
     "copy:all": "run-p copy:dist copy:index",
-    "build:copy": "run-s build copy:all"
+    "build:copy": "run-s build clean:dist copy:all"
   },
   "dependencies": {
     "@emmetio/codemirror-plugin": "^0.5.4",
@@ -36,6 +37,7 @@
     "@vue/eslint-config-prettier": "^4.0.0",
     "babel-eslint": "^10.0.1",
     "cpy-cli": "^2.0.0",
+    "del-cli": "^1.1.0",
     "eslint": "^5.8.0",
     "eslint-plugin-vue": "^5.0.0-0",
     "node-sass": "^4.9.0",
