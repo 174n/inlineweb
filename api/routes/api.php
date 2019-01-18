@@ -12,9 +12,6 @@ use Illuminate\Http\Request;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
-if (env('APP_ENV') === 'production') {
-    \URL::forceScheme('https');
-}
 
 Route::group([
     'prefix' => 'auth'
@@ -29,10 +26,10 @@ Route::group([
 Route::group([
     'prefix' => 'projects'
 ], function () {
-    Route::get('/', 'ProjectController@index');
-    Route::get('/user/{id}', 'ProjectController@user');
-    Route::get('/{id}', 'ProjectController@show');
-    Route::post('/', 'ProjectController@store');
-    Route::put('/{id}', 'ProjectController@update');
-    Route::delete('/{id}', 'ProjectController@delete');
+    Route::get('', 'ProjectController@index');
+    Route::get('user/{id}', 'ProjectController@user');
+    Route::get('{id}', 'ProjectController@show');
+    Route::post('', 'ProjectController@store');
+    Route::put('{id}', 'ProjectController@update');
+    Route::delete('{id}', 'ProjectController@delete');
 });
