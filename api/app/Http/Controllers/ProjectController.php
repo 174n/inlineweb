@@ -35,6 +35,7 @@ class ProjectController extends Controller
         return Project::select('title', 'uuid', 'user_id', 'created_at')
             ->where('user_id', $id)
             ->with('user:id,name')
+            ->orderBy('created_at', 'title')
             ->paginate(6);
     }
 
@@ -79,7 +80,9 @@ class ProjectController extends Controller
             return $project;
         }
         else {
-            return 404;
+            return response()->json([
+                'message' => 'Unauthenticated.'
+            ]);
         }
 
     }
@@ -90,10 +93,14 @@ class ProjectController extends Controller
 
         if(JWTAuth::user()->is($project->user)) {
             $project->delete();        
-            return 204;
+            return response()->json([
+                'success' => $id
+            ]);
         }
         else {
-            return 404;
+            return response()->json([
+                'message' => 'Unauthenticated.'
+            ]);
         }
         
     }

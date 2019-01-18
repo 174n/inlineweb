@@ -11,8 +11,12 @@
         </div>
         <div class="buttons">
           <router-link to="/register" class="accent" v-if="!$store.state.user">Register</router-link>
-          <router-link to="/editor" class="accent" v-else>New Project</router-link>
-          <a href="https://github.com/Rundik/inlineweb" target="_blank">Checkout Github</a>
+          <router-link to="/editor" class="accent" v-else>
+            New Project
+          </router-link>
+          <a href="https://github.com/Rundik/inlineweb" target="_blank">
+            Source Code
+          </a>
         </div>
       </div>
     </section>

@@ -42,8 +42,12 @@
           <span v-else>Size is loading</span>
         </div>
         <div class="right">
-          <a :href="'/p/' + $route.params.id" v-if="$route.params.id">share</a>
-          <div class="divider" v-if="$route.params.id"></div>
+          <template  v-if="$route.params.id">
+            <button @click="deleteProject">delete</button>
+            <div class="divider"></div>
+            <a :href="'/p/' + $route.params.id">share</a>
+            <div class="divider"></div>
+          </template>
           <button @click="minifyCode">minify</button>
           <button @click="beautifyCode">beautify</button>
           <div class="divider"></div>
@@ -200,6 +204,22 @@ export default {
         }
       }
     },
+    async deleteProject() {
+      const response = await request(
+        "api/projects/" + this.$route.params.id,
+        "DELETE"
+      );
+      if (response.success === this.$route.params.id) {
+        this.$router.push("/");
+        EventBus.$emit(
+          "success",
+          "Deleted",
+          "Project was successfully deleted"
+        );
+      } else {
+        EventBus.$emit("error", "Error", "Can't touch this");
+      }
+    },
     getEditorParams: lang => ({
       tabSize: 4,
       mode: `text/${lang}`,
@@ -273,7 +293,7 @@ export default {
     },
     setCode() {
       this.compressedCode = this.getCode(true);
-      this.base64code = `${btoa(this.getCode())}`;
+      this.base64code = `${btoa(unescape(encodeURIComponent(this.getCode())))}`;
     },
     encodeString: string => {
       const Uint8ArrayToBase64 = bytes =>

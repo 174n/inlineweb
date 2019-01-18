@@ -49,7 +49,7 @@
           <\/script>
         `;
         let hashData = LZMA.decompress(Base64ToArray(hash)).replace(/\\n/g,"\\n");
-        iframe.src = "data:text/html;charset=utf-8;base64," + btoa(frameScript+hashData);
+        iframe.src = "data:text/html;charset=utf-8;base64," + btoa(unescape(encodeURIComponent(frameScript+hashData)));
         window.windowHash = sha256(window.location.hash);
       }
     }

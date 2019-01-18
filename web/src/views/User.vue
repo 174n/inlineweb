@@ -1,6 +1,6 @@
 <template>
-  <div class="container">
-    <div class="user" v-if="user">
+  <div class="container" v-if="user">
+    <div class="user">
       <div class="avatar" v-html="avatar"></div>
       <div class="text">
         <div class="username">
@@ -13,7 +13,7 @@
       </div>
       <a @click="logout" v-if="!userId" class="logout">Logout</a>
     </div>
-    <projects :userid="user.id" @total="getTotal"/>
+    <projects :userid="user.id" @total="setTotal"/>
   </div>
 </template>
 
@@ -47,14 +47,14 @@ export default {
   },
   mounted() {
     if (!this.user && !this.userId) {
-      this.route.push("/");
+      this.$router.push("/");
     }
   },
   methods: {
     logout() {
       this.$store.dispatch("logout");
     },
-    getTotal(total) {
+    setTotal(total) {
       this.total = total;
     }
   }
