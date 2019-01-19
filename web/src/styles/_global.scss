@@ -24,7 +24,7 @@ body {
   background-color: lighten($editorThemeBg, 7);
 }
 
-.hero a {
+.hero a, .link a {
   transition: all 250ms ease-in-out;
   &,
   &:visited,
@@ -102,5 +102,37 @@ body {
         border-radius: 0 0 $borderRadius $borderRadius;
       }
     }
+  }
+}
+
+@mixin close($size, $color, $bg: transparent, $opacity: 0.3) {
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: $size;
+  height: $size;
+  opacity: $opacity;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  background-color: $bg;
+  transition: all 250ms ease-in-out;
+  &:hover {
+    opacity: 1;
+  }
+  &:before,
+  &:after {
+    position: absolute;
+    content: " ";
+    height: $size*0.66;
+    width: 2px;
+    background-color: $color;
+  }
+  &:before {
+    transform: rotate(45deg);
+  }
+  &:after {
+    transform: rotate(-45deg);
   }
 }

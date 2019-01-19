@@ -2,19 +2,19 @@
   <div id="app">
   	<Header/>
     <router-view/>
-    <Error/>
+    <Message/>
   </div>
 </template>
 
 <script>
 import Header from "@/components/Header";
-import Error from "@/components/Error";
+import Message from "@/components/Message";
 require("typeface-montserrat");
 
 export default {
   components: {
     Header,
-    Error
+    Message
   },
   created() {
     if (this.$store.state.token) {

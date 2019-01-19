@@ -1,5 +1,34 @@
 <template>
   <div id="editor">
+    <modal title="Share this project" ref="share">
+      <div class="line" v-for="(link, i) in shareLinks" :key="i">
+        <div class="label">
+         <div class="text">{{ link.title }}: </div>
+        </div>
+        <div class="input-field" v-if="!link.button">
+         <input type="text" :value="link.link">
+        </div>
+        <div class="link">
+          <a :href="link.link" target="_blank">
+            <img :src="require(`@/assets/link.svg`)">
+          </a>
+        </div>
+      </div>
+    </modal>
+    <modal title="Are you sure?" ref="delete">
+      <div class="delete">
+        <div class="text">
+          <p>
+            Are you sure you want to delete this project?
+          </p>
+          <p>There is no way back</p>
+        </div>
+        <div class="buttons">
+          <div class="accent" @click="deleteProject">Yeah</div>
+          <div class="close">No</div>
+        </div>
+      </div>
+    </modal>
     <div class="editor-panes" :class="panesPosition" :style="editorPanesStyles">
       <div class="pane html-pane">
         <div class="label">html</div>
@@ -43,9 +72,11 @@
         </div>
         <div class="right">
           <template  v-if="$route.params.id">
-            <button @click="deleteProject">delete</button>
-            <div class="divider"></div>
-            <a :href="'/p/' + $route.params.id">share</a>
+            <template  v-if="$store.state.user">
+              <button @click="deleteProjectDialog">delete</button>
+              <div class="divider"></div>
+            </template>
+            <button @click="shareProject">share</button>
             <div class="divider"></div>
           </template>
           <button @click="minifyCode">minify</button>
@@ -96,6 +127,8 @@ import { LZMA } from "lzma/src/lzma_worker-min.js";
 import { EventBus } from "@/event-bus.js";
 import request from "@/request";
 
+import Modal from "@/components/Modal";
+
 export default {
   name: "editor",
   data() {
@@ -123,6 +156,38 @@ export default {
     },
     compressedSize() {
       return this.compressedCode.length;
+    },
+    pageAlias() {
+      return `${location.origin}/p/${this.$route.params.id}`;
+    },
+    pageUrl() {
+      return `${location.origin}/p#${this.compressedCode}`;
+    },
+    ittyBitty() {
+      return `https://itty.bitty.site/#${this.$store.state.editorTitle}/${
+        this.compressedCode
+      }`;
+    },
+    twitterLink() {
+      return `https://twitter.com/intent/tweet?text=${encodeURIComponent(
+        "Check out my new project\n"
+      )}&url=${this.ittyBitty.replace("#", "%23")}`;
+    },
+    shareLinks() {
+      return [
+        {
+          title: "Alias",
+          link: this.pageAlias
+        },
+        {
+          title: "Full URL",
+          link: this.pageUrl
+        },
+        {
+          title: "Itty bitty",
+          link: this.ittyBitty
+        }
+      ];
     }
   },
   created() {
@@ -164,7 +229,8 @@ export default {
     this.$store.commit("updateEditorTitle", "");
   },
   components: {
-    codemirror
+    codemirror,
+    Modal
   },
   watch: {
     panesPosition: function() {
@@ -219,6 +285,12 @@ export default {
       } else {
         EventBus.$emit("error", "Error", "Can't touch this");
       }
+    },
+    deleteProjectDialog() {
+      this.$refs.delete.open();
+    },
+    shareProject() {
+      this.$refs.share.open();
     },
     getEditorParams: lang => ({
       tabSize: 4,
@@ -602,6 +674,73 @@ export default {
   }
   .red {
     color: $red;
+  }
+}
+.line {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  & > div {
+    padding: 10px;
+  }
+  .label {
+    width: 100px;
+    font-weight: 600;
+  }
+  .input-field {
+    input {
+      padding: 10px;
+      border: 0;
+      background-color: $grayText;
+      color: $editorThemeBg;
+      width: 250px;
+      @include mq($until: tablet) {
+        width: 130px;
+      }
+    }
+  }
+  .link {
+    flex-grow: 1;
+    text-align: center;
+    img {
+      width: 20px;
+    }
+  }
+}
+.delete {
+  .text {
+    font-size: 1.1em;
+    font-weight: 800;
+    color: $red;
+    letter-spacing: 0.06em;
+    text-align: center;
+    p {
+      margin: 5px;
+    }
+  }
+  .buttons {
+    display: flex;
+    justify-content: center;
+    & > div {
+      padding: 10px 20px;
+      background-color: $grayText;
+      color: $editorThemeBg;
+      margin: 15px;
+      font-size: 1.3em;
+      font-weight: 700;
+      border-radius: $borderRadius;
+      cursor: pointer;
+      transition: all 250ms ease-in-out;
+      &:hover {
+        background-color: lighten($grayText, 10);
+      }
+      &.accent {
+        background-color: $red;
+        &:hover {
+          background-color: lighten($red, 10);
+        }
+      }
+    }
   }
 }
 </style>

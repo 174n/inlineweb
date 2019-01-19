@@ -10,7 +10,7 @@
 import { EventBus } from "@/event-bus.js";
 
 export default {
-  name: "error",
+  name: "message",
   data() {
     return {
       visible: false,
@@ -85,33 +85,7 @@ export default {
     font-weight: 600;
   }
   .close {
-    position: absolute;
-    right: 0;
-    top: 0;
-    width: 50px;
-    height: 50px;
-    opacity: 0.3;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    &:hover {
-      opacity: 1;
-    }
-    &:before,
-    &:after {
-      position: absolute;
-      content: " ";
-      height: 33px;
-      width: 2px;
-      background-color: lighten($editorThemeBg, 10);
-    }
-    &:before {
-      transform: rotate(45deg);
-    }
-    &:after {
-      transform: rotate(-45deg);
-    }
+    @include close(50px, lighten($editorThemeBg, 10));
   }
 }
 
