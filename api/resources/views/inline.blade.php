@@ -28,23 +28,31 @@
     const Base64ToArray = base64 => atob(base64).split("").map(v=>v.charCodeAt(0));
     const placeContents = _ => {
       let hash = window.location.hash.slice(1);
+      if (hash.slice(0, 1) === "/") {
+        [document.title, hash] = hash.slice(1).split(/\/(.+)/);
+      }
       if(hash) {
         let frameScript = `
           <script>
-            function getItem(name){
-              return new Promise(function(resolve, reject) {
-                window.top.postMessage({call: "getItem", name: name}, "*");
-                const resolver = e => {
-                  if(typeof e.data === "string"){
-                    resolve(e.data);
-                    // window.removeEventListener("message", resolver);
+            const Storage = {
+              getItem: name => {
+                return new Promise(function(resolve, reject) {
+                  window.top.postMessage({call: "getItem", name: name}, "*");
+                  const resolver = e => {
+                    if(typeof e.data === "string"){
+                      resolve(e.data);
+                      window.removeEventListener("message", resolver);
+                    }
                   }
-                }
-                window.addEventListener("message", resolver, false);
-              });
-            }
-            function setItem(name, value){
-              window.top.postMessage({call: "setItem", name: name, value: value}, "*");
+                  window.addEventListener("message", resolver, false);
+                });
+              },
+              setItem: (name, value) => {
+                window.top.postMessage({call: "setItem", name: name, value: value}, "*");
+              },
+              removeItem: name => {
+                window.top.postMessage({call: "removeItem", name: name}, "*");
+              }
             }
           <\/script>
         `;
@@ -59,13 +67,15 @@
     window.addEventListener("hashchange", placeContents);
 
     window.addEventListener("message", e => {
-      if(typeof e.data == "object"){
-        if(e.data.call === "getitem") {
-          console.log("getItem "+e.data.name);
-          iframe.contentWindow.postMessage("here is your "+e.data.name, "*");
-        }
-        else if(e.data.call === "setItem") {
-          console.log("setItem "+e.data.name+": "+e.data.value);
+      if (e.data && typeof e.data == "object") {
+        if (e.data.call === "getItem") {
+          iframe.contentWindow.postMessage(
+            localStorage.getItem(window.windowHash + e.data.name),
+          "*");
+        } else if (e.data.call === "setItem") {
+          localStorage.setItem(window.windowHash + e.data.name, e.data.value);
+        } else if (e.data.call === "removeItem") {
+          localStorage.removeItem(window.windowHash + e.data.name);
         }
       }
     });

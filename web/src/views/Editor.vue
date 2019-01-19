@@ -60,7 +60,7 @@
         <iframe
           id="iframe"
           sandbox="allow-scripts allow-forms allow-top-navigation allow-popups allow-modals allow-popups-to-escape-sandbox"
-          :src="'data:text/html;charset=utf-8;base64,' + base64code"
+          :src="'/p#' + compressedCode"
         ></iframe>
       </div>
       <div class="statusbar">
