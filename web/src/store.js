@@ -54,6 +54,7 @@ export default new Vuex.Store({
         commit("setToken", token);
         dispatch("getUser");
         router.push("/");
+        location.reload();
       } else {
         EventBus.$emit("form-error", "Incorrect username or password.");
       }
@@ -69,6 +70,7 @@ export default new Vuex.Store({
         commit("setToken", response.token);
         dispatch("getUser");
         router.push("/");
+        location.reload();
       } else {
         EventBus.$emit("form-error", Object.values(response).join(" "));
       }

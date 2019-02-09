@@ -21,7 +21,7 @@
       </div>
     </section>
     <div class="container">
-      <section class="home">
+      <section id="home">
         <projects/>
       </section>
     </div>
@@ -94,13 +94,14 @@ export default {
         text-align: center;
       }
       h1 {
-        font-size: 1.7em;
+        font-size: 2em;
       }
       .buttons {
         flex-direction: column;
         a {
+          margin: 0;
           font-size: 1em;
-          margin-top: 5px;
+          margin-top: 10px;
           text-align: center;
         }
       }
@@ -110,7 +111,7 @@ export default {
   color: $grayText;
   padding: 50px 60px;
   @include mq($until: tablet) {
-    padding: 10px;
+    padding: 15px;
   }
 }
 </style>
