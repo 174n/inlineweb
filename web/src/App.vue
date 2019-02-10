@@ -2,6 +2,7 @@
   <div id="app" :class="{forfooter: displayfooter}">
     <Header/>
     <router-view/>
+    <div class="nothing"></div>
   	<Footer/>
     <Message/>
   </div>
@@ -40,6 +41,10 @@ export default {
 <style lang="scss">
 @import "normalize-scss";
 @include normalize();
+
+.nothing {
+  flex-grow: 1;
+}
 
 .forfooter {
   display: flex;
